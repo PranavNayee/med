@@ -1,0 +1,25 @@
+# Netlify — publishes the static frontend. Set NIROG_API_BASE in
+# Site settings > Environment variables to your Render URL, e.g.
+#   NIROG_API_BASE=https://nirog-api.onrender.com
+# Paths are from the repo root. Only frontend/ is published; the backend
+# source must never end up on the static site.
+[build]
+  publish = "frontend"
+  command = "python3 frontend/write_config.py"
+
+[[redirects]]
+  from   = "/"
+  to     = "/nirog.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "no-referrer"
+
+[[headers]]
+  for = "/config.js"
+  [headers.values]
+    Cache-Control = "no-cache"

@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Nirog — Your family's health, one tap away</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================== DESIGN TOKENS ============================== */
+:root{
+  --teal-900:#06352e; --teal-800:#0a4d42; --teal-700:#0e7c6b; --teal-600:#13a08a;
+  --teal-500:#19c2a6; --teal-400:#3dd0b8; --teal-300:#7fe0cf; --teal-200:#aeece1; --teal-100:#d6f4ee; --teal-50:#eefbf8;
+  --mint:#e9f6f2; --mint-2:#f2fbf9;
+  --coral:#ff6b5a; --coral-dark:#f24e3b; --coral-soft:#fff0ed;
+  --amber:#f5a623; --amber-soft:#fff6e6;
+  --green:#16a34a; --green-dark:#0a7d54; --green-soft:#e8f8ee;
+  --blue:#3b82f6; --blue-soft:#eaf1ff;
+  --violet:#7c5cff; --violet-soft:#f0ecff;
+  --rose:#f43f6e; --rose-soft:#ffeaf0;
+  --ink:#0f2a26; --ink-2:#34514b; --muted:#6a857f; --faint:#9bb0aa;
+  --line:#e6efec; --line-2:#d8e7e2;
+  --bg:#f5f9f7; --card:#ffffff;
+  --shadow-sm:0 1px 2px rgba(8,60,52,.06), 0 1px 3px rgba(8,60,52,.05);
+  --shadow:0 6px 22px rgba(8,60,52,.08), 0 2px 6px rgba(8,60,52,.05);
+  --shadow-lg:0 18px 50px rgba(8,60,52,.16), 0 6px 16px rgba(8,60,52,.08);
+  --r-sm:10px; --r:16px; --r-lg:22px; --r-xl:28px; --r-pill:999px;
+  --display:'Plus Jakarta Sans',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+  --sb:280px; --maxw:1320px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--body); color:var(--ink); background:var(--bg);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overscroll-behavior-y:none;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--teal-300);color:var(--teal-900)}
+h1,h2,h3,h4{font-family:var(--display);margin:0;letter-spacing:-.02em;line-height:1.15}
+p{margin:0}
+img{max-width:100%;display:block}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#cfe2dc;border-radius:10px;border:3px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#b6d4cc}
+
+/* ============================== LAYOUT SHELL ============================== */
+#root{min-height:100vh}
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sb);flex:0 0 var(--sb);background:var(--card);border-right:1px solid var(--line);
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:40;
+}
+.sb-brand{display:flex;align-items:center;gap:11px;padding:22px 22px 14px}
+.sb-logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(140deg,var(--teal-600),var(--teal-800));display:grid;place-items:center;box-shadow:0 6px 16px rgba(14,124,107,.35)}
+.sb-name{font-family:var(--display);font-weight:800;font-size:20px;color:var(--ink);letter-spacing:-.04em}
+.sb-name b{color:var(--teal-700)}
+.sb-tag{font-size:11px;color:var(--muted);margin-top:1px;font-weight:500}
+.sb-scroll{flex:1;overflow-y:auto;padding:6px 12px 12px}
+.sb-group-label{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);padding:16px 12px 7px}
+.nav-item{display:flex;align-items:center;gap:13px;padding:11px 13px;border-radius:13px;color:var(--ink-2);font-weight:600;font-size:14.5px;position:relative;transition:.16s;margin-bottom:2px}
+.nav-item:hover{background:var(--mint);color:var(--teal-800)}
+.nav-item.active{background:linear-gradient(100deg,var(--teal-700),var(--teal-600));color:#fff;box-shadow:0 8px 18px rgba(14,124,107,.28)}
+.nav-item.active .ni-ic{color:#fff}
+.ni-ic{width:20px;height:20px;flex:0 0 20px;color:var(--teal-600);transition:.16s}
+.nav-item:hover .ni-ic{color:var(--teal-700)}
+.ni-badge{margin-left:auto;background:var(--coral);color:#fff;font-size:11px;font-weight:700;min-width:19px;height:19px;border-radius:10px;display:grid;place-items:center;padding:0 5px}
+.nav-item.active .ni-badge{background:rgba(255,255,255,.25)}
+.sb-foot{padding:12px;border-top:1px solid var(--line)}
+.sb-emerg{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:14px;background:var(--coral-soft);color:var(--coral-dark);font-weight:700;font-size:14px;width:100%;transition:.16s}
+.sb-emerg:hover{background:#ffe2dc}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:35;background:rgba(245,249,247,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:13px 26px;display:flex;align-items:center;gap:16px}
+.tb-mobtitle{display:none}
+.searchbar{flex:1;max-width:520px;display:flex;align-items:center;gap:11px;background:var(--card);border:1.5px solid var(--line);border-radius:var(--r-pill);padding:11px 18px;transition:.18s;box-shadow:var(--shadow-sm)}
+.searchbar:focus-within{border-color:var(--teal-500);box-shadow:0 0 0 4px var(--teal-50)}
+.searchbar input{border:none;outline:none;background:none;font-size:14.5px;width:100%;color:var(--ink)}
+.searchbar input::placeholder{color:var(--faint)}
+.tb-loc{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:var(--r-pill);background:var(--card);border:1.5px solid var(--line);font-weight:600;font-size:13px;color:var(--ink-2);box-shadow:var(--shadow-sm);white-space:nowrap}
+.tb-loc b{color:var(--teal-700)}
+.tb-spacer{flex:1}
+.icon-btn{position:relative;width:44px;height:44px;border-radius:14px;background:var(--card);border:1.5px solid var(--line);display:grid;place-items:center;color:var(--ink-2);transition:.16s;box-shadow:var(--shadow-sm)}
+.icon-btn:hover{border-color:var(--teal-300);color:var(--teal-700);transform:translateY(-1px)}
+.icon-btn .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--coral);border:2px solid var(--card)}
+.icon-btn .cnt{position:absolute;top:-6px;right:-6px;background:var(--coral);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:11px;display:grid;place-items:center;padding:0 5px;border:2px solid var(--bg)}
+.tb-avatar{width:44px;height:44px;border-radius:14px;background:linear-gradient(140deg,var(--violet),var(--blue));display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;font-family:var(--display);box-shadow:var(--shadow-sm);cursor:pointer}
+
+.content{flex:1;padding:26px;max-width:var(--maxw);width:100%;margin:0 auto}
+.page-enter{animation:pageIn .4s cubic-bezier(.22,1,.36,1)}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ============================== TYPOGRAPHY HELPERS ============================== */
+.h-xl{font-size:30px;font-weight:800;letter-spacing:-.035em}
+.h-lg{font-size:23px;font-weight:800;letter-spacing:-.03em}
+.h-md{font-size:18px;font-weight:700;letter-spacing:-.02em}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-600)}
+.sub{color:var(--muted);font-size:14px;line-height:1.5}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:30px 0 16px}
+.section-head .link{color:var(--teal-700);font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:4px}
+.section-head .link:hover{gap:7px;transition:.16s}
+
+/* ============================== CARDS / BUTTONS ============================== */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm)}
+.card-pad{padding:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:14.5px;padding:12px 20px;border-radius:var(--r-pill);transition:.16s;white-space:nowrap;font-family:var(--display);letter-spacing:-.01em}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(100deg,var(--teal-700),var(--teal-600));color:#fff;box-shadow:0 8px 20px rgba(14,124,107,.3)}
+.btn-primary:hover{box-shadow:0 12px 26px rgba(14,124,107,.4);transform:translateY(-1px)}
+.btn-coral{background:linear-gradient(100deg,var(--coral),var(--coral-dark));color:#fff;box-shadow:0 8px 20px rgba(255,107,90,.32)}
+.btn-coral:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(255,107,90,.42)}
+.btn-ghost{background:var(--mint);color:var(--teal-800)}
+.btn-ghost:hover{background:var(--teal-100)}
+.btn-outline{background:var(--card);border:1.5px solid var(--line-2);color:var(--ink-2)}
+.btn-outline:hover{border-color:var(--teal-400);color:var(--teal-700)}
+.btn-sm{padding:8px 15px;font-size:13px}
+.btn-block{width:100%}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r-pill);background:var(--card);border:1.5px solid var(--line);font-weight:600;font-size:13px;color:var(--ink-2);transition:.15s;white-space:nowrap}
+.chip:hover{border-color:var(--teal-300)}
+.chip.on{background:var(--teal-700);color:#fff;border-color:var(--teal-700)}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r-pill);font-size:11.5px;font-weight:700}
+.tag-green{background:var(--green-soft);color:var(--green)}
+.tag-coral{background:var(--coral-soft);color:var(--coral-dark)}
+.tag-blue{background:var(--blue-soft);color:var(--blue)}
+.tag-amber{background:var(--amber-soft);color:#c87f00}
+.tag-teal{background:var(--teal-50);color:var(--teal-700)}
+.tag-violet{background:var(--violet-soft);color:var(--violet)}
+.divider{height:1px;background:var(--line);margin:16px 0}
+
+/* ============================== GRID UTILS ============================== */
+.grid{display:grid;gap:16px}
+.row{display:flex;gap:12px}
+.wrap{flex-wrap:wrap}
+.between{justify-content:space-between}
+.center{align-items:center}
+.scroll-x{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.scroll-x::-webkit-scrollbar{height:0}
+.scroll-x>*{scroll-snap-align:start;flex:0 0 auto}
+
+/* ============================== HOME HERO ============================== */
+.hero{background:linear-gradient(125deg,var(--teal-800),var(--teal-700) 55%,var(--teal-600));border-radius:var(--r-xl);padding:28px 30px;color:#fff;position:relative;overflow:hidden;box-shadow:0 20px 44px rgba(14,124,107,.3)}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 70%)}
+.hero::before{content:"";position:absolute;right:90px;bottom:-90px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(127,224,207,.22),transparent 70%)}
+.hero-grid{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;position:relative;z-index:1}
+.hero h1{font-size:27px;font-weight:800;margin-bottom:7px}
+.hero p{color:rgba(255,255,255,.82);font-size:14.5px;max-width:430px;line-height:1.55}
+.hero-stats{display:flex;gap:26px;margin-top:20px}
+.hero-stat .n{font-family:var(--display);font-size:22px;font-weight:800}
+.hero-stat .l{font-size:12px;color:rgba(255,255,255,.7);font-weight:500}
+
+/* health ring */
+.ring-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ring{position:relative;width:148px;height:148px}
+.ring svg{transform:rotate(-90deg)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-center .score{font-family:var(--display);font-size:38px;font-weight:800;line-height:1}
+.ring-center .lbl{font-size:11px;color:rgba(255,255,255,.78);font-weight:600;letter-spacing:.04em;margin-top:2px}
+
+/* quick actions */
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.qa{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;display:flex;flex-direction:column;gap:13px;transition:.18s;text-align:left;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.qa:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:transparent}
+.qa-ic{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;color:#fff}
+.qa-t{font-weight:700;font-size:15.5px;font-family:var(--display);letter-spacing:-.02em}
+.qa-d{font-size:12.5px;color:var(--muted);line-height:1.4}
+.qa-arrow{position:absolute;right:16px;top:18px;color:var(--faint);transition:.18s}
+.qa:hover .qa-arrow{color:var(--teal-600);transform:translate(3px,-3px)}
+
+/* family switcher */
+.fam-row{display:flex;gap:11px;overflow-x:auto;padding-bottom:4px}
+.fam{display:flex;flex-direction:column;align-items:center;gap:7px;padding:4px;min-width:64px;cursor:pointer}
+.fam-av{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-family:var(--display);font-size:18px;border:3px solid transparent;transition:.16s}
+.fam.on .fam-av{border-color:var(--teal-500);box-shadow:0 0 0 3px var(--teal-50)}
+.fam-name{font-size:11.5px;font-weight:600;color:var(--ink-2)}
+.fam.on .fam-name{color:var(--teal-700)}
+.fam-add .fam-av{background:var(--mint);color:var(--teal-600);border:2px dashed var(--teal-300)}
+
+/* ============================== PHARMACY ============================== */
+.med-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.med-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;transition:.18s;display:flex;flex-direction:column;box-shadow:var(--shadow-sm)}
+.med-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--teal-100)}
+.med-thumb{height:120px;background:linear-gradient(135deg,var(--mint),var(--teal-50));display:grid;place-items:center;position:relative}
+.med-thumb .pill-ic{width:52px;height:52px;color:var(--teal-600)}
+.med-rx{position:absolute;top:10px;left:10px}
+.med-disc{position:absolute;top:10px;right:10px;background:var(--coral);color:#fff;font-size:11px;font-weight:800;padding:4px 9px;border-radius:8px}
+.med-body{padding:14px 15px 16px;display:flex;flex-direction:column;gap:7px;flex:1}
+.med-name{font-weight:700;font-size:15px;font-family:var(--display);line-height:1.25}
+.med-salt{font-size:12px;color:var(--muted)}
+.med-pack{font-size:11.5px;color:var(--faint)}
+.med-price{display:flex;align-items:baseline;gap:8px;margin-top:auto}
+.med-price .now{font-family:var(--display);font-weight:800;font-size:18px;color:var(--ink)}
+.med-price .was{font-size:13px;color:var(--faint);text-decoration:line-through}
+.med-foot{display:flex;align-items:center;gap:10px;margin-top:10px}
+.stepper{display:flex;align-items:center;gap:0;border:1.5px solid var(--teal-200,#bfe8df);border-radius:var(--r-pill);overflow:hidden;background:var(--teal-50)}
+.stepper button{width:34px;height:34px;display:grid;place-items:center;color:var(--teal-700);font-weight:800;font-size:18px}
+.stepper button:hover{background:var(--teal-100)}
+.stepper .qn{min-width:30px;text-align:center;font-weight:700;color:var(--teal-800);font-size:14px}
+
+/* medicine detail */
+.md-head{display:grid;grid-template-columns:200px 1fr;gap:26px;align-items:start}
+.md-vis{height:200px;border-radius:var(--r-lg);background:linear-gradient(135deg,var(--mint),var(--teal-50));display:grid;place-items:center;border:1px solid var(--line)}
+.md-vis svg{width:80px;height:80px;color:var(--teal-600)}
+.fact{display:flex;gap:13px;padding:15px 0;border-bottom:1px solid var(--line)}
+.fact:last-child{border-bottom:none}
+.fact-ic{width:38px;height:38px;border-radius:11px;flex:0 0 38px;display:grid;place-items:center;background:var(--mint);color:var(--teal-700)}
+.fact-t{font-weight:700;font-size:13.5px;margin-bottom:2px}
+.fact-d{font-size:13px;color:var(--muted);line-height:1.5}
+.subst-row{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:var(--r);transition:.15s;background:var(--card)}
+.subst-row:hover{border-color:var(--teal-300);box-shadow:var(--shadow-sm)}
+.subst-row.best{border-color:var(--green);background:var(--green-soft)}
+.subst-ic{width:46px;height:46px;border-radius:12px;flex:0 0 46px;display:grid;place-items:center;background:#fff;color:var(--teal-600);border:1px solid var(--line)}
+.save-pill{background:var(--green);color:#fff;font-weight:800;font-size:12px;padding:5px 11px;border-radius:var(--r-pill)}
+
+/* ============================== DOCTORS ============================== */
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:13px}
+.spec{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:.16s;text-align:center;box-shadow:var(--shadow-sm)}
+.spec:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--teal-100)}
+.spec-ic{width:50px;height:50px;border-radius:15px;display:grid;place-items:center}
+.spec-n{font-weight:700;font-size:13px;font-family:var(--display)}
+.spec-c{font-size:11px;color:var(--muted)}
+.doc-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;display:flex;gap:16px;transition:.16s;box-shadow:var(--shadow-sm)}
+.doc-card:hover{box-shadow:var(--shadow);border-color:var(--teal-100)}
+.doc-av{width:72px;height:72px;border-radius:18px;flex:0 0 72px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:26px;font-family:var(--display);position:relative}
+.doc-on{position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:var(--green);border:3px solid var(--card)}
+.doc-meta{flex:1;min-width:0}
+.doc-name{font-weight:700;font-size:16.5px;font-family:var(--display)}
+.doc-spec{color:var(--teal-700);font-weight:600;font-size:13px}
+.doc-sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.doc-stats{display:flex;gap:16px;margin-top:11px;flex-wrap:wrap}
+.doc-stat{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink-2);font-weight:600}
+.star{color:var(--amber)}
+.slot{padding:8px 13px;border-radius:10px;border:1.5px solid var(--line);font-weight:600;font-size:13px;color:var(--ink-2);transition:.14s}
+.slot:hover{border-color:var(--teal-400);color:var(--teal-700)}
+.slot.on{background:var(--teal-700);color:#fff;border-color:var(--teal-700)}
+
+/* consult chat */
+.chat-wrap{display:flex;flex-direction:column;height:560px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.chat-head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:13px;background:var(--mint-2)}
+.chat-body{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(var(--bg),var(--bg))}
+.bubble{max-width:78%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.5}
+.bubble.them{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:5px;align-self:flex-start;box-shadow:var(--shadow-sm)}
+.bubble.me{background:linear-gradient(100deg,var(--teal-700),var(--teal-600));color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
+.bubble.ai{background:var(--violet-soft);border:1px solid #e2daff;border-bottom-left-radius:5px;align-self:flex-start}
+.chat-input{padding:13px 16px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;background:var(--card)}
+.chat-input input{flex:1;border:1.5px solid var(--line);border-radius:var(--r-pill);padding:11px 18px;outline:none;font-size:14px}
+.chat-input input:focus{border-color:var(--teal-400)}
+.typing{display:flex;gap:4px;padding:14px 16px}
+.typing span{width:7px;height:7px;border-radius:50%;background:var(--teal-400);animation:blink 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+
+/* ============================== LABS ============================== */
+.lab-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;transition:.16s;box-shadow:var(--shadow-sm)}
+.lab-card:hover{box-shadow:var(--shadow);border-color:var(--teal-100)}
+.lab-tests{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.lab-tests .t{font-size:11px;background:var(--mint);color:var(--teal-800);padding:3px 9px;border-radius:7px;font-weight:600}
+.trend-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;box-shadow:var(--shadow-sm)}
+
+/* ============================== RECORDS TIMELINE ============================== */
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--line-2)}
+.tl-item{position:relative;padding-bottom:22px}
+.tl-dot{position:absolute;left:-30px;top:2px;width:20px;height:20px;border-radius:50%;border:3px solid var(--card);display:grid;place-items:center;box-shadow:0 0 0 1.5px var(--line-2)}
+.tl-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;box-shadow:var(--shadow-sm);transition:.15s}
+.tl-card:hover{box-shadow:var(--shadow);border-color:var(--teal-100)}
+
+/* ============================== STAT TILES ============================== */
+.stat-tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;box-shadow:var(--shadow-sm)}
+.stat-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;margin-bottom:13px}
+.stat-n{font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-.03em}
+.stat-l{font-size:12.5px;color:var(--muted);font-weight:600}
+
+/* offers */
+.offer{min-width:300px;border-radius:var(--r-lg);padding:22px;color:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:140px}
+.offer::after{content:"";position:absolute;right:-30px;bottom:-30px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.13)}
+.offer h4{font-size:19px;font-weight:800}
+.offer p{font-size:13px;opacity:.92;margin-top:4px}
+.offer .code{margin-top:14px;align-self:flex-start;background:rgba(255,255,255,.22);backdrop-filter:blur(4px);padding:6px 13px;border-radius:9px;font-weight:700;font-size:13px;letter-spacing:.05em;border:1px dashed rgba(255,255,255,.5)}
+
+/* ============================== CART / DRAWER ============================== */
+.scrim{position:fixed;inset:0;background:rgba(8,35,30,.42);backdrop-filter:blur(3px);z-index:90;animation:fade .25s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:430px;max-width:92vw;background:var(--bg);z-index:100;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;animation:slideIn .32s cubic-bezier(.22,1,.36,1)}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:none}}
+.drawer-head{padding:20px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:var(--card)}
+.drawer-body{flex:1;overflow-y:auto;padding:18px 20px}
+.drawer-foot{padding:18px 22px;border-top:1px solid var(--line);background:var(--card)}
+.cart-item{display:flex;gap:13px;padding:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:11px}
+.cart-thumb{width:54px;height:54px;border-radius:12px;background:var(--mint);display:grid;place-items:center;flex:0 0 54px;color:var(--teal-600)}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
+.modal-card{background:var(--card);border-radius:var(--r-xl);width:100%;max-width:480px;box-shadow:var(--shadow-lg);animation:popIn .3s cubic-bezier(.22,1,.36,1);max-height:90vh;overflow-y:auto}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:none}}
+
+/* emergency */
+.sos-btn{width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8a7a,var(--coral) 55%,var(--coral-dark));color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-family:var(--display);font-weight:800;font-size:24px;box-shadow:0 18px 50px rgba(242,78,59,.5);position:relative}
+.sos-btn::before{content:"";position:absolute;inset:-12px;border-radius:50%;border:2px solid var(--coral);opacity:.5;animation:sosPulse 2s infinite}
+@keyframes sosPulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.25);opacity:0}}
+
+/* toast */
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:10px;align-items:center}
+.toast{background:var(--teal-900);color:#fff;padding:13px 20px;border-radius:var(--r-pill);font-weight:600;font-size:14px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;animation:toastIn .3s cubic-bezier(.22,1,.36,1)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* progress / misc */
+.pbar{height:8px;border-radius:6px;background:var(--line);overflow:hidden}
+.pbar>i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--teal-600),var(--teal-500))}
+.skel{background:linear-gradient(90deg,#eef4f2,#f7fbf9,#eef4f2);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+/* Prescription reader */
+.fld{display:grid;gap:5px;font-size:13px}
+.fld-l{font-weight:700;color:var(--ink-2)}
+.fld input{border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font-size:14.5px;outline:none;background:var(--card);color:var(--ink);min-width:0;width:100%}
+.fld input:focus{border-color:var(--teal-400)}
+.fld input.bad{border-color:var(--coral)}
+.fld-e{color:var(--coral-dark);font-size:12.5px}
+.addr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.addr-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.addr{display:flex;gap:12px;align-items:flex-start;margin-top:10px;cursor:pointer}
+.addr.on{border:2px solid var(--teal-500)}
+.addr input{margin-top:4px;accent-color:var(--teal-600)}
+.chk-grid{grid-template-columns:1.4fr 1fr}
+@media (max-width:760px){.chk-grid,.addr-grid,.addr-grid3{grid-template-columns:1fr}}
+.safety-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.safety{border-radius:12px;padding:10px 12px;border:1px solid var(--line);font-size:13.5px}
+.safety.safe{background:var(--green-soft)}.safety.caution{background:var(--amber-soft)}
+.safety.unsafe{background:var(--coral-soft)}.safety.consult{background:var(--mint)}
+.safety-l{font-size:11.5px;font-weight:700}
+.rx-banner{display:flex;align-items:center;gap:14px;width:100%;margin-top:14px;cursor:pointer;background:linear-gradient(110deg,var(--mint),var(--teal-50));border:1px solid var(--teal-100);font:inherit;color:inherit}
+@media (max-width:640px){.rx-banner .btn{display:none}}
+.rx-drop{display:flex;flex-direction:column;align-items:center;gap:10px;padding:34px 20px;border:2px dashed var(--teal-100);border-radius:var(--r-lg);background:var(--mint);text-align:center;cursor:pointer}
+.rx-drop:hover{border-color:var(--teal-400)}
+.rx-type{display:grid;grid-template-columns:2fr 1fr auto;gap:8px;margin-top:12px}
+.rx-type input{border:1.5px solid var(--line);border-radius:var(--r-pill);padding:10px 16px;outline:none;font-size:14px;min-width:0;background:var(--card);color:var(--ink)}
+.rx-type input:focus{border-color:var(--teal-400)}
+.rx-line{margin-top:14px}
+.rx-read{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.rx-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.rx-opt:first-child{border-top:none}
+.rx-opt .nm{font-weight:700;font-size:14.5px}
+.rx-price{font-weight:800;white-space:nowrap}
+@media (max-width:640px){.rx-type{grid-template-columns:1fr}.rx-opt{flex-wrap:wrap}}
+.empty-ic{width:72px;height:72px;border-radius:22px;background:var(--mint);color:var(--teal-600);display:grid;place-items:center;margin:0 auto 16px}
+
+/* bottom nav (mobile) */
+.botnav{display:none}
+
+/* ============================== RESPONSIVE ============================== */
+@media(max-width:1080px){
+  .qa-grid{grid-template-columns:repeat(2,1fr)}
+  .hero-grid{grid-template-columns:1fr}
+  .ring-wrap{flex-direction:row;justify-content:flex-start}
+}
+@media(max-width:860px){
+  .sidebar{display:none}
+  .main{padding-bottom:78px}
+  .tb-loc{display:none}
+  .tb-mobtitle{display:flex;align-items:center;gap:9px}
+  .tb-mobtitle .sb-logo{width:34px;height:34px;border-radius:10px}
+  .tb-mobtitle .nm{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:-.04em}
+  .tb-mobtitle .nm b{color:var(--teal-700)}
+  .content{padding:18px 16px}
+  .topbar{padding:11px 16px;gap:10px}
+  .searchbar{display:none}
+  .md-head{grid-template-columns:1fr}
+  .md-vis{height:150px}
+  .botnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:8px 6px 10px;justify-content:space-around}
+  .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 12px;border-radius:13px;color:var(--muted);font-size:10.5px;font-weight:600;flex:1;max-width:80px}
+  .bn-item.active{color:var(--teal-700)}
+  .bn-item.active .bn-ic{transform:translateY(-1px)}
+  .bn-ic{width:23px;height:23px}
+  .h-xl{font-size:24px}.hero h1{font-size:22px}
+  .drawer{width:100vw;max-width:100vw}
+  .hero-stats{gap:18px}
+}
+@media(max-width:520px){
+  .med-grid{grid-template-columns:repeat(2,1fr);gap:11px}
+  .med-thumb{height:96px}
+  .qa-grid{gap:10px}
+}
+.fade-up{animation:pageIn .45s cubic-bezier(.22,1,.36,1) both}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/htm/3.1.1/htm.js"></script>
+<script src="config.js"></script>
+<script>
+/* ============================================================================
+   NIROG — Healthcare Super App  ·  single-file prototype
+   React 18 + htm (no build step).  All data is mock/demo.
+   ============================================================================ */
+const {useState,useEffect,useRef,useMemo,createElement} = React;
+const html = htm.bind(createElement);
+const $ = (id)=>document.getElementById(id);
+
+/* ============================== API CLIENT ==============================
+   All data now comes from the Nirog backend. Nothing clinical is hard-coded
+   in the browser any more.
+   ====================================================================== */
+const API_BASE = (window.NIROG_API_BASE || 'http://127.0.0.1:5000') + '/api';
+const TOKEN_KEY = 'nirog_token';
+let AUTH_TOKEN = (()=>{ try{ return localStorage.getItem(TOKEN_KEY); }catch(e){ return null; } })();
+function setAuthToken(token){
+  AUTH_TOKEN = token || null;
+  try{ token ? localStorage.setItem(TOKEN_KEY, token) : localStorage.removeItem(TOKEN_KEY); }catch(e){}
+}
+
+async function api(path, options={}){
+  const headers = Object.assign({}, options.headers || {});
+  if(!(options.body instanceof FormData)) headers['Content-Type']='application/json';
+  if(AUTH_TOKEN) headers['Authorization'] = 'Bearer ' + AUTH_TOKEN;
+  const res = await fetch(API_BASE + path, Object.assign({}, options, {
+    headers,
+    body: options.body instanceof FormData ? options.body
+        : (options.body ? JSON.stringify(options.body) : undefined),
+  }));
+  let payload = null;
+  try { payload = await res.json(); } catch(e) { payload = null; }
+  if(res.status===401 && AUTH_TOKEN && !path.startsWith('/auth/')){
+    // Expired or revoked session: drop it and let the app fall back to guest.
+    setAuthToken(null);
+    window.dispatchEvent(new Event('nirog-logout'));
+  }
+  if(!res.ok){
+    const err = new Error((payload && payload.message) || (payload && payload.error) || ('HTTP '+res.status));
+    err.status = res.status; err.code = payload && payload.error; err.payload = payload;
+    throw err;
+  }
+  return payload;
+}
+
+/* Accent colours are presentation only, so they stay client-side and are
+   assigned deterministically rather than stored per product. */
+const ACCENTS = ['teal','coral','blue','green','rose','violet','amber'];
+const accentFor = (key='') => {
+  let h = 0; for(let i=0;i<key.length;i++) h = (h*31 + key.charCodeAt(i)) >>> 0;
+  return ACCENTS[h % ACCENTS.length];
+};
+
+/* Mutable stores, filled by boot(). Components read these exactly as they
+   read the old constants. */
+let MEDS=[], SPECS=[], DOCTORS=[], LABS=[], PACKAGES=[], RECORDS=[],
+    TRENDS={}, FAMILY=[], REMINDERS=[], ORDERS=[];
+
+const OFFERS = [
+  {t:'Flat 25% off medicines', d:'On your first order above \u20b9499', code:'NIROG25', bg:'linear-gradient(120deg,#0e7c6b,#13a08a)'},
+  {t:'Free doctor consult', d:'First video consult on us', code:'FREEDOC', bg:'linear-gradient(120deg,#ff6b5a,#f24e3b)'},
+  {t:'Full body test \u20b91499', d:'92 parameters \u00b7 Home sample', code:'FULLBODY', bg:'linear-gradient(120deg,#7c5cff,#5a3ff0)'},
+];
+
+const decorate = (p) => Object.assign({}, p, {color: accentFor(p.id||p.name||'')});
+
+const TREND_META = {
+  hba1c:{label:'HbA1c', good:'<5.7', color:'amber', dir:'down'},
+  bp_sys:{label:'Blood Pressure (Systolic)', good:'<120', color:'rose', dir:'down'},
+  weight:{label:'Weight', good:'68\u201372', color:'teal', dir:'down'},
+};
+
+let USER = null;       // {name, first_name, mobile} once logged in
+let SERVER_CART = null; // last /cart payload
+
+async function boot(){
+  /* Guests can browse. A saved session is restored if it is still valid. */
+  if(AUTH_TOKEN){
+    try{ USER = await api('/me'); }
+    catch(e){ setAuthToken(null); USER = null; }
+  }
+
+  const [products, specs, doctors, labs, me] = await Promise.all([
+    api('/catalog/products?size=48'),
+    api('/specialties'),
+    api('/doctors'),
+    api('/lab-tests'),
+    USER ? Promise.resolve(USER) : Promise.resolve({members:[]}),
+  ]);
+
+  MEDS = (products.items||[]).map(decorate);
+  SPECS = (specs.items||[]).map(s=>Object.assign({}, s, {color: s.color||accentFor(s.id)}));
+  DOCTORS = (doctors.items||[]).map(decorate);
+
+  const allLabs = (labs.items||[]).map(decorate);
+  LABS = allLabs.filter(l=>!l.package);
+  PACKAGES = allLabs.filter(l=>l.package).map(p=>Object.assign({},p,{tests:p.params}));
+
+
+  FAMILY = []; RECORDS = []; REMINDERS = []; ORDERS = []; TRENDS = {}; SERVER_CART = null;
+  const selfMember = (me.members||[]).find(m=>m.is_self);
+  if(selfMember && AUTH_TOKEN){
+    FAMILY = (me.members||[]).map(m=>Object.assign({}, m, {color: accentFor(m.id)}));
+    SERVER_CART = await api('/cart').catch(()=>null);
+    const numericId = String(selfMember.id).replace(/^f/,'');
+    const [records, vitals, reminders, orders] = await Promise.all([
+      api('/members/'+numericId+'/records').catch(()=>({items:[]})),
+      api('/members/'+numericId+'/vitals').catch(()=>({series:{}})),
+      api('/members/'+numericId+'/reminders').catch(()=>({items:[]})),
+      api('/orders').catch(()=>({items:[]})),
+    ]);
+    RECORDS = (records.items||[]).map(decorate);
+    REMINDERS = (reminders.items||[]).map(r=>Object.assign({}, r, {color: accentFor(String(r.id))}));
+    ORDERS = (orders.items||[]).filter(o=>!['DELIVERED','CANCELLED','REJECTED'].includes(o.status)).map(o=>({
+      id:o.id, items:(o.items[0]?o.items[0].name:'Order') + (o.items.length>1?' + '+(o.items.length-1)+' more':''),
+      status:o.status.replace(/_/g,' ').toLowerCase().replace(/^./,c=>c.toUpperCase()),
+      eta:'', prog: o.status==='DELIVERED'?100:(o.status==='OUT_FOR_DELIVERY'?75:35),
+      color: accentFor(o.id),
+    }));
+    TRENDS = {};
+    Object.keys(vitals.series||{}).forEach(key=>{
+      const meta = TREND_META[key] || {label:key, good:'', color:'teal', dir:'down'};
+      const series = vitals.series[key];
+      TRENDS[key] = Object.assign({}, meta, {unit: series.unit, data: series.data});
+    });
+  }
+}
+
+/* Fetches full detail + server-computed substitutes for one product. */
+function useMedDetail(sku){
+  const [state,setState]=useState({loading:true, detail:null, subs:null, error:null});
+  useEffect(()=>{
+    let live=true;
+    setState({loading:true, detail:null, subs:null, error:null});
+    Promise.all([
+      api('/catalog/products/'+encodeURIComponent(sku)),
+      api('/catalog/products/'+encodeURIComponent(sku)+'/substitutes'),
+    ]).then(([detail,subs])=>{ if(live) setState({loading:false, detail, subs, error:null}); })
+      .catch(err=>{ if(live) setState({loading:false, detail:null, subs:null, error:err.message}); });
+    return ()=>{ live=false; };
+  },[sku]);
+  return state;
+}
+
+
+/* ============================== ICONS (Lucide-style line set) ============================== */
+const PATHS = {
+  home:'M3 10.5 12 3l9 7.5M5 9.5V21h5v-6h4v6h5V9.5',
+  pill:'M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7ZM7 7l7 7',
+  stethoscope:'M5 3v6a4 4 0 0 0 8 0V3M9 16v1a4 4 0 0 0 8 0v-2M19 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z',
+  flask:'M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3M7.5 14h9',
+  folder:'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z',
+  sparkle:'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3ZM19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2Z',
+  shield:'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z',
+  heartpulse:'M20.8 6.6a5 5 0 0 0-8.8-2 5 5 0 0 0-8.8 2c-1 3 .9 6 8.8 11 7.9-5 9.8-8 8.8-11ZM3.5 12h4l1.5-3 2 6 1.5-3h4',
+  ambulance:'M3 8h11v8H3V8ZM14 11h4l3 3v2h-7v-5ZM7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM8 5h2v2h2v2h-2v2H8v-2H6V7h2V5Z',
+  hospital:'M4 21V8l8-5 8 5v13M9 21v-5h6v5M11 8h2M10 11h4',
+  baby:'M9 12a1 1 0 1 0 0-.01M15 12a1 1 0 1 0 0-.01M9 16s1.5 1.5 3 1.5 3-1.5 3-1.5M12 3a4 4 0 0 0-4 4 4 4 0 0 0 8 0 4 4 0 0 0-4-4ZM6 11a6 6 0 0 1 12 0v4a6 6 0 0 1-12 0v-4Z',
+  brain:'M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3V4ZM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3V4Z',
+  dumbbell:'M6.5 6.5 17.5 17.5M3 8v8M6 5v14M18 5v14M21 8v8',
+  briefcase:'M4 8h16v11H4V8ZM9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M4 13h16',
+  cart:'M3 4h2l2.4 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 8H6M10 21a1 1 0 1 0 0-.01M18 21a1 1 0 1 0 0-.01',
+  bell:'M18 9a6 6 0 0 0-12 0c0 6-3 7-3 7h18s-3-1-3-7M10.5 20a2 2 0 0 0 3 0',
+  search:'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM21 21l-4.3-4.3',
+  pin:'M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11ZM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z',
+  chevR:'M9 6l6 6-6 6',chevL:'M15 6l-6 6 6 6',chevD:'M6 9l6 6 6-6',
+  arrowR:'M5 12h14M13 6l6 6-6 6',plus:'M12 5v14M5 12h14',minus:'M5 12h14',
+  x:'M6 6l12 12M18 6 6 18',check:'M5 12l5 5L20 7',
+  star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z',
+  clock:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 7v5l3 2',
+  video:'M3 7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7ZM15 10l6-3v10l-6-3',
+  phone:'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2',
+  chat:'M4 5h16v11H9l-5 4V5Z',mic:'M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3ZM5 11a7 7 0 0 0 14 0M12 18v3',
+  send:'M4 12 20 4l-6 16-3-7-7-1Z',
+  calendar:'M5 5h14v15H5V5ZM5 9h14M9 3v4M15 3v4',
+  upload:'M12 16V4M8 8l4-4 4 4M5 16v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3',
+  download:'M12 4v12M8 12l4 4 4-4M5 18v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1',
+  doc:'M6 3h8l4 4v14H6V3ZM14 3v4h4M9 12h6M9 16h6',
+  drop:'M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11Z',
+  truck:'M3 7h11v9H3V7ZM14 10h4l3 3v3h-7v-6ZM7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z',
+  user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21a8 8 0 0 1 16 0',
+  users:'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM2 21a7 7 0 0 1 14 0M17 11a4 4 0 0 0 0-8M22 21a7 7 0 0 0-5-6.7',
+  settings:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM19 12a7 7 0 0 0-.1-1.3l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2.2-1.3L14 2h-4l-.3 2.4a7 7 0 0 0-2.2 1.3l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.3l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2.2 1.3L10 22h4l.3-2.4a7 7 0 0 0 2.2-1.3l2.4 1 2-3.4-2-1.6A7 7 0 0 0 19 12Z',
+  logout:'M14 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2M9 12h12M18 9l3 3-3 3',
+  shield2:'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3ZM9 12l2 2 4-4',
+  thermo:'M12 3a2 2 0 0 0-2 2v8a4 4 0 1 0 4 0V5a2 2 0 0 0-2-2ZM12 9v5',
+  activity:'M3 12h4l2-7 4 14 2-7h6',
+  trending:'M3 17l6-6 4 4 8-8M15 7h6v6',
+  lungs:'M12 3v8M9 7c0-2-1-3-3-3-1 4-2 7-2 10a3 3 0 0 0 5 2V7ZM15 7c0-2 1-3 3-3 1 4 2 7 2 10a3 3 0 0 1-5 2V7Z',
+  bone:'M7 17a2.5 2.5 0 1 1-1.8-4.2 2.5 2.5 0 1 1 4.6-2L15 4.2a2.5 2.5 0 1 1 4.6 2A2.5 2.5 0 1 1 17 12L7 17Z',
+  eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
+  tooth:'M12 3c2 0 3 1 5 1s3 6 1 11c-1 2-2 2-2.5 0L14 11c-.5-1-1.5-1-2 0l-1.5 4c-.5 2-1.5 2-2.5 0C6 10 5 5 7 4s3-1 5-1Z',
+  gift:'M4 11h16v9H4v-9ZM2 7h20v4H2V7ZM12 7v13M12 7C9 7 7 6 7 4.5S9 3 12 7c3-4 5-3 5-2.5S15 7 12 7Z',
+  percent:'M19 5 5 19M8 8a2 2 0 1 0-.01 0M16 16a2 2 0 1 0-.01 0',
+  wallet:'M3 7a2 2 0 0 1 2-2h13v3M3 7v10a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3M21 11h-5a2 2 0 0 0 0 4h5v-4Z',
+  flame:'M12 3s4 4 4 8a4 4 0 0 1-8 0c0-1 .5-2 1-2.5C9 11 12 8 12 3ZM10 17a2 2 0 0 0 4 0',
+  award:'M12 14a5 5 0 1 0 0-10 5 5 0 0 0 0 10ZM8.5 13 7 21l5-2.5L17 21l-1.5-8',
+  refresh:'M3 12a9 9 0 0 1 15-6.7L21 8M21 4v4h-4M21 12a9 9 0 0 1-15 6.7L3 16M3 20v-4h4',
+  shieldcheck:'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3ZM9 12l2 2 4-4',
+  map:'M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2ZM9 4v14M15 6v14',
+  zap:'M13 3 4 14h7l-1 7 9-11h-7l1-7Z',
+  grid:'M4 4h7v7H4V4ZM13 4h7v7h-7V4ZM4 13h7v7H4v-7ZM13 13h7v7h-7v-7Z',
+  info:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 11v5M12 8h.01',
+  lock:'M6 10h12v10H6V10ZM8 10V7a4 4 0 0 1 8 0v3',
+  glucose:'M12 3v18M5 8h14M5 16h14M8 5l8 14M16 5 8 19',
+  pulse:'M3 12h3l2-5 4 10 2-5h7',
+};
+function Icon({name,size=22,stroke=2,...rest}){
+  const d=PATHS[name]||PATHS.info;
+  return html`<svg width=${size} height=${size} viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" stroke-width=${stroke} stroke-linecap="round" stroke-linejoin="round" ...${rest}>
+     ${d.split('M').filter(Boolean).map((seg,i)=>html`<path key=${i} d=${'M'+seg}/>`)}
+  </svg>`;
+}
+/* ============================== HELPERS ============================== */
+const inr = n => '₹'+Number(n).toLocaleString('en-IN');
+const pct = (mrp,price)=> Math.round((1-price/mrp)*100);
+const C = { teal:'var(--teal-600)', coral:'var(--coral)', blue:'var(--blue)', violet:'var(--violet)',
+            green:'var(--green)', amber:'var(--amber)', rose:'var(--rose)' };
+const soft = { teal:'var(--teal-50)', coral:'var(--coral-soft)', blue:'var(--blue-soft)', violet:'var(--violet-soft)',
+               green:'var(--green-soft)', amber:'var(--amber-soft)', rose:'var(--rose-soft)' };
+
+/* ============================== MEDICINES ============================== */
+/* Mock data removed — all data now served by the API. */
+
+/* ============================== SHARED COMPONENTS ============================== */
+function Avatar({name,color='teal',size=44,radius=14,online}){
+  const initials = name.split(' ').filter(w=>!/^(dr\.?|the)$/i.test(w)).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  const grads={teal:'linear-gradient(140deg,var(--teal-600),var(--teal-800))',rose:'linear-gradient(140deg,#fb7199,var(--rose))',
+    amber:'linear-gradient(140deg,#ffc24d,var(--amber))',violet:'linear-gradient(140deg,var(--violet),var(--blue))',
+    coral:'linear-gradient(140deg,#ff9180,var(--coral-dark))',blue:'linear-gradient(140deg,#5ea0ff,var(--blue))',
+    green:'linear-gradient(140deg,#4ade80,var(--green))'};
+  return html`<div style=${{width:size,height:size,borderRadius:radius,background:grads[color]||grads.teal,display:'grid',
+     placeItems:'center',color:'#fff',fontWeight:800,fontFamily:'var(--display)',fontSize:size*0.36,flex:'0 0 '+size+'px',position:'relative'}}>
+     ${initials}${online?html`<span class="doc-on"/>`:null}</div>`;
+}
+function Stars({r,size=14}){
+  return html`<span style=${{display:'inline-flex',gap:1}}>
+    ${[0,1,2,3,4].map(i=>html`<${Icon} key=${i} name="star" size=${size}
+      style=${{color:i<Math.round(r)?'var(--amber)':'var(--line-2)',fill:i<Math.round(r)?'var(--amber)':'none'}}/>`)}</span>`;
+}
+function SectionHead({title,sub,action,onAction}){
+  return html`<div class="section-head">
+    <div><h2 class="h-lg">${title}</h2>${sub?html`<p class="sub" style=${{marginTop:4}}>${sub}</p>`:null}</div>
+    ${action?html`<button class="link" onClick=${onAction}>${action}<${Icon} name="chevR" size=15/></button>`:null}
+  </div>`;
+}
+function Tag({children,kind='teal'}){ return html`<span class=${'tag tag-'+kind}>${children}</span>`; }
+
+/* SVG line chart for vital trends */
+function TrendChart({data,color='teal',unit='',h=120}){
+  const w=300, pad=24;
+  const vals=data.map(d=>d.v), min=Math.min(...vals), max=Math.max(...vals);
+  const rng=(max-min)||1;
+  const X=i=> pad + (i/(data.length-1))*(w-pad*2);
+  const Y=v=> (h-22) - ((v-min)/rng)*(h-44) + 6;
+  const stroke = {teal:'#13a08a',rose:'#f43f6e',amber:'#f5a623',blue:'#3b82f6'}[color]||'#13a08a';
+  const pts=data.map((d,i)=>[X(i),Y(d.v)]);
+  const line=pts.map((p,i)=>(i?'L':'M')+p[0]+' '+p[1]).join(' ');
+  const area=line+` L ${X(data.length-1)} ${h} L ${X(0)} ${h} Z`;
+  const gid='g'+Math.random().toString(36).slice(2,7);
+  return html`<svg viewBox=${`0 0 ${w} ${h}`} style=${{width:'100%',height:h}}>
+    <defs><linearGradient id=${gid} x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color=${stroke} stop-opacity="0.22"/>
+      <stop offset="100%" stop-color=${stroke} stop-opacity="0"/></linearGradient></defs>
+    <path d=${area} fill=${`url(#${gid})`}/>
+    <path d=${line} fill="none" stroke=${stroke} stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${pts.map((p,i)=>html`<g key=${i}>
+       <circle cx=${p[0]} cy=${p[1]} r="4" fill="#fff" stroke=${stroke} stroke-width="2.5"/>
+       <text x=${p[0]} y=${h-5} text-anchor="middle" font-size="10" fill="var(--faint)" font-family="var(--body)">${data[i].d}</text>
+       ${i===data.length-1?html`<text x=${p[0]} y=${p[1]-12} text-anchor="middle" font-size="11" font-weight="700" fill=${stroke} font-family="var(--display)">${data[i].v}${unit}</text>`:null}
+     </g>`)}
+  </svg>`;
+}
+
+/* animated count-up ring */
+function ScoreRing({score=82,size=148,stroke=12}){
+  const [val,setVal]=useState(0);
+  useEffect(()=>{ let raf,start; const dur=900;
+    const tick=t=>{ if(!start)start=t; const p=Math.min((t-start)/dur,1);
+      setVal(Math.round(score*(1-Math.pow(1-p,3)))); if(p<1)raf=requestAnimationFrame(tick); };
+    raf=requestAnimationFrame(tick); return ()=>cancelAnimationFrame(raf);
+  },[score]);
+  const r=(size-stroke)/2, c=2*Math.PI*r, off=c-(val/100)*c;
+  return html`<div class="ring" style=${{width:size,height:size}}>
+    <svg width=${size} height=${size}>
+      <circle cx=${size/2} cy=${size/2} r=${r} fill="none" stroke="rgba(255,255,255,.18)" stroke-width=${stroke}/>
+      <circle cx=${size/2} cy=${size/2} r=${r} fill="none" stroke="#fff" stroke-width=${stroke}
+        stroke-linecap="round" stroke-dasharray=${c} stroke-dashoffset=${off} style=${{transition:'stroke-dashoffset .1s'}}/>
+    </svg>
+    <div class="ring-center">
+      <div class="score">${val}</div>
+      <div class="lbl">Health score</div>
+    </div>
+  </div>`;
+}
+/* ============================== STORE (context) ============================== */
+const Store = React.createContext(null);
+const useStore = ()=>React.useContext(Store);
+
+/* ============================== HOME ============================== */
+function QuickAction({icon,color,title,desc,onClick}){
+  return html`<button class="qa" onClick=${onClick}>
+    <div class="qa-ic" style=${{background:`linear-gradient(135deg,${C[color]},${C[color]})`,boxShadow:`0 8px 18px ${soft[color]}`}}>
+      <${Icon} name=${icon} size=24/></div>
+    <div><div class="qa-t">${title}</div><div class="qa-d">${desc}</div></div>
+    <span class="qa-arrow"><${Icon} name="arrowR" size=18/></span>
+  </button>`;
+}
+function Home(){
+  const s=useStore();
+  const fam=FAMILY.find(f=>f.id===s.activeFam)||FAMILY[0];
+  const hour=new Date().getHours();
+  const greet=hour<12?'Good morning':(hour<17?'Good afternoon':'Good evening');
+  return html`<div class="page-enter">
+    <div class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow" style=${{color:'var(--teal-300)'}}>${s.user?greet+', '+s.user.first_name:'Welcome to Nirog'}</div>
+          <h1 style=${{marginTop:8}}>Your family's health,<br/>beautifully in one place.</h1>
+          <p>Order medicines with generic savings, consult top doctors in minutes, book lab tests at home, and keep every report safe — all in Nirog.</p>
+          ${s.user?html`<div class="hero-stats">
+            <div class="hero-stat"><div class="n">${REMINDERS.length}</div><div class="l">Active reminders</div></div>
+            <div class="hero-stat"><div class="n">${ORDERS.length}</div><div class="l">Open orders</div></div>
+            <div class="hero-stat"><div class="n">${RECORDS.length}</div><div class="l">Records saved</div></div>
+          </div>`:html`<button class="btn btn-coral" style=${{marginTop:18}} onClick=${()=>s.requireLogin()}>Log in or create an account</button>`}
+        </div>
+        ${fam?.score!=null?html`<div class="ring-wrap"><${ScoreRing} score=${fam.score}/></div>`:null}
+      </div>
+    </div>
+
+    <div style=${{marginTop:26}}>
+      <div class="qa-grid">
+        <${QuickAction} icon="pill" color="teal" title="Order Medicine" desc="Up to 60% off · 2-hr delivery" onClick=${()=>s.go('pharmacy')}/>
+        <${QuickAction} icon="video" color="coral" title="Consult Doctor" desc="Video in under 5 min" onClick=${()=>s.go('doctors')}/>
+        <${QuickAction} icon="flask" color="violet" title="Book Lab Test" desc="Free home sample pickup" onClick=${()=>s.go('labs')}/>
+        <${QuickAction} icon="sparkle" color="amber" title="Ask Nirog AI" desc="Check your symptoms 24×7" onClick=${()=>s.go('ai')}/>
+      </div>
+      <button class="card card-pad rx-banner" onClick=${()=>s.go('rxscan')}>
+        <div class="qa-ic" style=${{background:'linear-gradient(135deg,var(--teal-700),var(--teal-600))'}}><${Icon} name="upload" size=24/></div>
+        <div style=${{flex:1,textAlign:'left'}}>
+          <div style=${{fontWeight:800,fontSize:16}}>Have a prescription? Upload a photo</div>
+          <div class="sub">We read your doctor's prescription and show the same medicines at the lowest price.</div>
+        </div>
+        <span class="btn btn-primary btn-sm">Upload</span>
+      </button>
+    </div>
+
+    ${FAMILY.length?html`<${SectionHead} title="Family health" sub="Switch profiles to manage everyone's care" action="Manage" onAction=${()=>s.go('profile')}/>`:null}
+    ${FAMILY.length?html`
+    <div class="fam-row">
+      ${FAMILY.map(f=>html`<div key=${f.id} class=${'fam'+(f.id===s.activeFam?' on':'')} onClick=${()=>s.setActiveFam(f.id)}>
+        <${Avatar} name=${f.name} color=${f.color} size=54 radius=27/>
+        <div class="fam-name">${f.name}</div></div>`)}
+      <div class="fam fam-add" onClick=${()=>s.toast('Add a family member')}>
+        <div class="fam-av"><${Icon} name="plus" size=22/></div><div class="fam-name">Add</div></div>
+    </div>`:null}
+
+    <div class="grid" style=${{gridTemplateColumns:'1.3fr 1fr',marginTop:26,alignItems:'start'}}>
+      <div>
+        <div class="row between center" style=${{marginBottom:14}}><h3 class="h-md">Active orders</h3>
+          ${s.user?html`<a href="#" class="sub" style=${{fontWeight:700,color:'var(--teal-700)'}} onClick=${e=>{e.preventDefault();s.go('orders');}}>All orders</a>`:null}</div>
+        ${ORDERS.length?null:html`<div class="card card-pad sub">${s.user?'No open orders.':'Log in to track your orders.'}</div>`}
+        ${ORDERS.map(o=>html`<div key=${o.id} class="card card-pad" style=${{marginBottom:12,cursor:'pointer'}} onClick=${()=>s.openOrder(o.id)}>
+          <div class="row between center">
+            <div class="row center" style=${{gap:12}}>
+              <div class="qa-ic" style=${{width:42,height:42,background:soft[o.color],color:C[o.color]}}><${Icon} name=${o.id.includes('21')?'truck':'truck'} size=20/></div>
+              <div><div style=${{fontWeight:700,fontSize:14.5}}>${o.items}</div>
+                <div class="sub" style=${{fontSize:12.5}}>#${o.id} · ${o.eta}</div></div>
+            </div>
+            <${Tag} kind=${o.color==='teal'?'teal':'blue'}>${o.status}</${Tag}>
+          </div>
+          <div class="pbar" style=${{marginTop:13}}><i style=${{width:o.prog+'%'}}/></div>
+        </div>`)}
+      </div>
+      <div>
+        <h3 class="h-md" style=${{marginBottom:14}}>Today's medicines</h3>
+        <div class="card card-pad">
+          ${REMINDERS.length?null:html`<div class="sub">${s.user?'No reminders set.':'Log in to see your medicine reminders.'}</div>`}
+          ${REMINDERS.map((r,i)=>html`<div key=${r.id} class="row between center" style=${{padding:'10px 0',borderBottom:i<REMINDERS.length-1?'1px solid var(--line)':'none'}}>
+            <div class="row center" style=${{gap:11}}>
+              <div style=${{width:36,height:36,borderRadius:11,background:soft[r.color],color:C[r.color],display:'grid',placeItems:'center'}}><${Icon} name="pill" size=18/></div>
+              <div><div style=${{fontWeight:700,fontSize:14}}>${r.t}</div><div class="sub" style=${{fontSize:12}}>${r.d} · ${r.time}</div></div>
+            </div>
+            ${r.taken?html`<${Tag} kind="green"><${Icon} name="check" size=12/> Taken</${Tag}>`
+              :html`<button class="btn btn-ghost btn-sm" onClick=${()=>s.toast('Marked as taken ✓')}>Mark taken</button>`}
+          </div>`)}
+        </div>
+      </div>
+    </div>
+
+    <${SectionHead} title="Offers for you" sub="Save more across the app"/>
+    <div class="scroll-x">
+      ${OFFERS.map((o,i)=>html`<div key=${i} class="offer" style=${{background:o.bg}}>
+        <div><h4>${o.t}</h4><p>${o.d}</p></div><div class="code">CODE: ${o.code}</div></div>`)}
+    </div>
+
+    <${SectionHead} title="Frequently ordered" sub="Reorder in one tap" action="Shop all" onAction=${()=>s.go('pharmacy')}/>
+    <div class="med-grid">${MEDS.slice(0,4).map(m=>html`<${MedCard} key=${m.id} m=${m}/>`)}</div>
+  </div>`;
+}
+
+/* ============================== PHARMACY ============================== */
+function MedCard({m}){
+  const s=useStore();
+  const qty=s.cart[m.id]||0;
+  return html`<div class="med-card">
+    <div class="med-thumb" onClick=${()=>s.openMed(m)} style=${{cursor:'pointer'}}>
+      <${Icon} name=${m.form==='Syrup'?'flask':'pill'} size=48 stroke=1.6 style=${{color:C[m.color]}}/>
+      ${m.rx?html`<span class="med-rx tag tag-coral">Rx</span>`:html`<span class="med-rx tag tag-green">OTC</span>`}
+      ${pct(m.mrp,m.price)>0?html`<span class="med-disc">${pct(m.mrp,m.price)}% OFF</span>`:null}
+    </div>
+    <div class="med-body">
+      <div class="med-name" onClick=${()=>s.openMed(m)} style=${{cursor:'pointer'}}>${m.name}</div>
+      <div class="med-salt">${m.salt}</div>
+      <div class="med-pack">${m.pack}</div>
+      <div class="med-price"><span class="now">${inr(m.price)}</span><span class="was">${inr(m.mrp)}</span></div>
+      <div class="med-foot">
+        ${qty>0?html`<div class="stepper">
+            <button onClick=${()=>s.setQty(m,qty-1)}><${Icon} name="minus" size=16/></button>
+            <span class="qn">${qty}</span>
+            <button onClick=${()=>s.setQty(m,qty+1)}><${Icon} name="plus" size=16/></button>
+          </div>`
+          :html`<button class="btn btn-ghost btn-sm btn-block" onClick=${()=>s.setQty(m,1)}>
+            <${Icon} name="cart" size=16/> Add</button>`}
+      </div>
+    </div>
+  </div>`;
+}
+/* Products fetched by search join MEDS, because the cart and other screens
+   look medicines up there by id. */
+function rememberMeds(items){
+  const known=new Set(MEDS.map(m=>m.id));
+  items.forEach(m=>{ if(!known.has(m.id)){ MEDS.push(m); known.add(m.id); } });
+}
+/* ============================== ACCOUNT & ORDERS ==============================
+   Login/registration, checkout with a saved address, and order history. The
+   cart, prices and prescription rules all come from the server. */
+const STATUS_TEXT = {
+  CREATED:'Placed', AWAITING_PRESCRIPTION:'Awaiting prescription', AWAITING_PHARMACIST:'Pharmacist checking',
+  CONFIRMED:'Confirmed', PACKED:'Packed', OUT_FOR_DELIVERY:'Out for delivery', DELIVERED:'Delivered',
+  CANCELLED:'Cancelled', REJECTED:'Rejected',
+};
+const statusTag = st => ['CANCELLED','REJECTED'].includes(st)?'coral':(st==='DELIVERED'?'green':'teal');
+
+function Field({label, error, ...props}){
+  return html`<label class="fld">
+    <span class="fld-l">${label}</span>
+    <input ...${props} class=${error?'bad':''}/>
+    ${error?html`<span class="fld-e">${error}</span>`:null}
+  </label>`;
+}
+
+function Login(){
+  const s=useStore();
+  const [mode,setMode]=useState('login');
+  const [f,setF]=useState({mobile:'',password:'',full_name:''});
+  const [busy,setBusy]=useState(false);
+  const [error,setError]=useState(null);
+  const set=k=>e=>setF({...f,[k]:e.target.value});
+  const submit=async(e)=>{
+    e.preventDefault(); setBusy(true); setError(null);
+    try{
+      const path = mode==='login'?'/auth/login':'/auth/register';
+      const body = mode==='login'?{mobile:f.mobile,password:f.password}:f;
+      const r = await api(path,{method:'POST',body});
+      await s.signIn(r.token);
+    }catch(err){ setError(err.message); }
+    finally{ setBusy(false); }
+  };
+  return html`<div class="page-enter" style=${{maxWidth:440,margin:'10px auto'}}>
+    <div class="card card-pad" style=${{padding:26}}>
+      <div class="eyebrow">${mode==='login'?'Welcome back':'New to Nirog'}</div>
+      <h1 class="h-lg" style=${{marginTop:6}}>${mode==='login'?'Log in':'Create your account'}</h1>
+      ${s.loginReason?html`<p class="sub" style=${{marginTop:6}}>${s.loginReason}</p>`:null}
+      <form onSubmit=${submit} style=${{marginTop:16,display:'grid',gap:12}}>
+        ${mode==='register'?html`<${Field} label="Full name" value=${f.full_name} onInput=${set('full_name')} autocomplete="name" required/>`:null}
+        <${Field} label="Mobile number" value=${f.mobile} onInput=${set('mobile')} inputmode="tel" autocomplete="tel" placeholder="10-digit mobile" required/>
+        <${Field} label="Password" type="password" value=${f.password} onInput=${set('password')}
+          autocomplete=${mode==='login'?'current-password':'new-password'} placeholder=${mode==='register'?'At least 8 characters':''} required/>
+        ${error?html`<div class="card card-pad" style=${{background:'var(--coral-soft)',padding:12,fontSize:13.5}}>${error}</div>`:null}
+        <button class="btn btn-primary btn-block" disabled=${busy}>${busy?'Please wait…':(mode==='login'?'Log in':'Create account')}</button>
+      </form>
+      <p class="sub" style=${{marginTop:14,textAlign:'center'}}>
+        ${mode==='login'?'New here? ':'Already have an account? '}
+        <a href="#" style=${{color:'var(--teal-700)',fontWeight:700}} onClick=${e=>{e.preventDefault();setMode(mode==='login'?'register':'login');setError(null);}}>
+          ${mode==='login'?'Create an account':'Log in'}</a></p>
+    </div>
+  </div>`;
+}
+
+function AddressForm({onSaved, onCancel}){
+  const [f,setF]=useState({label:'Home',recipient_name:USER?.name||'',phone:'',line1:'',line2:'',city:'',state:'',pincode:''});
+  const [errors,setErrors]=useState({});
+  const [busy,setBusy]=useState(false);
+  const set=k=>e=>setF({...f,[k]:e.target.value});
+  const save=async(e)=>{
+    e.preventDefault(); setBusy(true); setErrors({});
+    try{ onSaved(await api('/addresses',{method:'POST',body:f})); }
+    catch(err){ setErrors(err.payload?.fields||{_:err.message}); }
+    finally{ setBusy(false); }
+  };
+  return html`<form class="card card-pad" onSubmit=${save} style=${{display:'grid',gap:10,marginTop:12}}>
+    <div class="addr-grid">
+      <${Field} label="Name" value=${f.recipient_name} onInput=${set('recipient_name')} error=${errors.recipient_name}/>
+      <${Field} label="Mobile" value=${f.phone} onInput=${set('phone')} inputmode="tel" error=${errors.phone}/>
+    </div>
+    <${Field} label="House / flat, street" value=${f.line1} onInput=${set('line1')} error=${errors.line1}/>
+    <${Field} label="Area, landmark (optional)" value=${f.line2} onInput=${set('line2')}/>
+    <div class="addr-grid3">
+      <${Field} label="City" value=${f.city} onInput=${set('city')} error=${errors.city}/>
+      <${Field} label="State" value=${f.state} onInput=${set('state')} error=${errors.state}/>
+      <${Field} label="Pincode" value=${f.pincode} onInput=${set('pincode')} inputmode="numeric" maxlength="6" error=${errors.pincode}/>
+    </div>
+    ${errors._?html`<div class="sub" style=${{color:'var(--coral-dark)'}}>${errors._}</div>`:null}
+    <div class="row" style=${{gap:10}}>
+      <button class="btn btn-primary" disabled=${busy}>${busy?'Saving…':'Save address'}</button>
+      ${onCancel?html`<button type="button" class="btn btn-ghost" onClick=${onCancel}>Cancel</button>`:null}
+    </div>
+  </form>`;
+}
+
+/* Razorpay Standard Checkout. Resolves 'paid' only after the server has
+   verified the signature; 'dismissed' if the customer closed the popup. */
+let RZP_SCRIPT=null;
+function loadRazorpay(){
+  if(window.Razorpay) return Promise.resolve();
+  if(!RZP_SCRIPT) RZP_SCRIPT=new Promise((ok,fail)=>{
+    const tag=document.createElement('script');
+    tag.src='https://checkout.razorpay.com/v1/checkout.js';
+    tag.onload=ok; tag.onerror=()=>{ RZP_SCRIPT=null; fail(new Error("Couldn't load the payment page. Check your connection.")); };
+    document.head.appendChild(tag);
+  });
+  return RZP_SCRIPT;
+}
+async function payOnline(orderId, p){
+  await loadRazorpay();
+  return new Promise((resolve,reject)=>{
+    const rzp=new window.Razorpay({
+      key:p.key_id, amount:p.amount, currency:p.currency, order_id:p.razorpay_order_id,
+      name:p.name, description:p.description, theme:{color:'#0e7c6b'},
+      handler: async (resp)=>{
+        try{ await api('/orders/'+orderId+'/payment/verify',{method:'POST',body:resp}); resolve('paid'); }
+        catch(e){ reject(e); }
+      },
+      modal:{ondismiss:()=>resolve('dismissed')},
+    });
+    rzp.on('payment.failed', r=>reject(new Error(r?.error?.description||'Payment failed. You can try again from your order.')));
+    rzp.open();
+  });
+}
+
+function Checkout(){
+  const s=useStore();
+  const cart=s.serverCart;
+  const [addresses,setAddresses]=useState(null);
+  const [chosen,setChosen]=useState(null);
+  const [adding,setAdding]=useState(false);
+  const [busy,setBusy]=useState(false);
+  const [error,setError]=useState(null);
+  const [method,setMethod]=useState('COD');
+  const [online,setOnline]=useState(false);
+  const key=useRef('chk-'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
+
+  useEffect(()=>{ api('/payments/config').then(c=>setOnline(!!c.online_available)).catch(()=>{}); },[]);
+  useEffect(()=>{ api('/addresses').then(r=>{
+    setAddresses(r.items); setChosen((r.items.find(a=>a.is_default)||r.items[0]||{}).id||null);
+    if(!r.items.length) setAdding(true);
+  }).catch(e=>setError(e.message)); },[]);
+
+  if(!cart || !cart.items.length) return html`<div class="page-enter"><div class="card card-pad empty">
+    <div style=${{fontWeight:700}}>Your cart is empty</div>
+    <button class="btn btn-primary" style=${{marginTop:12}} onClick=${()=>s.go('pharmacy')}>Browse pharmacy</button></div></div>`;
+
+  const place=async()=>{
+    setBusy(true); setError(null);
+    try{
+      const order=await api('/orders',{method:'POST',body:{address_id:chosen,payment_method:method,idempotency_key:key.current}});
+      await s.refreshAccount();
+      if(order.payment){
+        let outcome='dismissed';
+        try{ outcome=await payOnline(order.id, order.payment); }
+        catch(e){ s.toast(e.message); }
+        s.toast(outcome==='paid'?'Payment received. Order confirmed':'Order saved. Complete payment from your order');
+        await s.refreshAccount();
+      } else s.toast('Order placed');
+      s.openOrder(order.id);
+    }catch(e){ setError(e.message); }
+    finally{ setBusy(false); }
+  };
+
+  return html`<div class="page-enter">
+    <button class="chip" onClick=${()=>s.setCartOpen(true)} style=${{marginBottom:18}}><${Icon} name="chevL" size=16/> Back to cart</button>
+    <h1 class="h-xl">Checkout</h1>
+    <div class="grid chk-grid" style=${{marginTop:18,alignItems:'start'}}>
+      <div>
+        <h3 class="h-md">Delivery address</h3>
+        ${addresses===null?html`<div class="sub" style=${{marginTop:10}}>Loading…</div>`:null}
+        ${(addresses||[]).map(a=>html`<label key=${a.id} class=${'card card-pad addr'+(chosen===a.id?' on':'')}>
+          <input type="radio" name="addr" checked=${chosen===a.id} onChange=${()=>setChosen(a.id)}/>
+          <div><div style=${{fontWeight:700}}>${a.label} ${a.is_default?html`<${Tag} kind="teal">Default</${Tag}>`:null}</div>
+          <div class="sub" style=${{fontSize:13.5}}>${a.text}</div></div></label>`)}
+        ${adding?html`<${AddressForm} onCancel=${addresses&&addresses.length?()=>setAdding(false):null}
+            onSaved=${a=>{setAddresses([a,...(addresses||[])]);setChosen(a.id);setAdding(false);}}/>`
+          :html`<button class="btn btn-outline" style=${{marginTop:12}} onClick=${()=>setAdding(true)}><${Icon} name="plus" size=16/> Add a new address</button>`}
+
+        <h3 class="h-md" style=${{marginTop:24}}>Payment</h3>
+        <label class=${'card card-pad addr'+(method==='ONLINE'?' on':'')} style=${{marginTop:10,opacity:online?1:.6}}>
+          <input type="radio" name="pay" disabled=${!online} checked=${method==='ONLINE'} onChange=${()=>setMethod('ONLINE')}/>
+          <div><div style=${{fontWeight:700}}>Pay online</div><div class="sub" style=${{fontSize:13.5}}>${online?'UPI, cards, netbanking and wallets via Razorpay':'Not available yet'}</div></div></label>
+        <label class=${'card card-pad addr'+(method==='COD'?' on':'')} style=${{marginTop:10}}>
+          <input type="radio" name="pay" checked=${method==='COD'} onChange=${()=>setMethod('COD')}/>
+          <div><div style=${{fontWeight:700}}>Cash on delivery</div><div class="sub" style=${{fontSize:13.5}}>Pay by cash or UPI when your order arrives.</div></div></label>
+      </div>
+
+      <div class="card card-pad" style=${{position:'sticky',top:88}}>
+        <h3 class="h-md">Order summary</h3>
+        ${cart.items.map(i=>html`<div key=${i.id} class="row between" style=${{padding:'9px 0',borderBottom:'1px solid var(--line)',fontSize:14}}>
+          <span>${i.name} × ${i.qty}${i.policy.requires_prescription?html` <${Tag} kind="coral">Rx</${Tag}>`:null}</span><b>${inr(i.line_total)}</b></div>`)}
+        <div class="row between" style=${{marginTop:10,fontSize:13.5}}><span class="sub">MRP total</span><span>${inr(cart.mrp_total)}</span></div>
+        <div class="row between" style=${{marginTop:6,fontSize:13.5}}><span class="sub">You save</span><span style=${{color:'var(--green)'}}>− ${inr(cart.you_save)}</span></div>
+        <div class="row between" style=${{marginTop:6,fontSize:13.5}}><span class="sub">Delivery</span><span>${cart.delivery?inr(cart.delivery):'FREE'}</span></div>
+        <div class="row between" style=${{marginTop:12,fontWeight:800,fontSize:18}}><span>To pay</span><span>${inr(cart.total)}</span></div>
+        ${cart.requires_prescription?html`<div class="card card-pad" style=${{marginTop:12,background:'var(--amber-soft)',fontSize:13}}>
+          Your cart has prescription (Rx) medicines. A pharmacist must check your prescription before these are sent.</div>`:null}
+        ${error?html`<div class="card card-pad" style=${{marginTop:12,background:'var(--coral-soft)',fontSize:13.5}}>${error}</div>`:null}
+        <button class="btn btn-coral btn-block" style=${{marginTop:14}} disabled=${busy||!chosen||!cart.checkout_allowed} onClick=${place}>
+          <${Icon} name="shieldcheck" size=18/> ${busy?'Please wait…':(method==='ONLINE'?'Pay '+inr(cart.total):'Place order · '+inr(cart.total))}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+const LAB_STATUS = {BOOKED:'Booked · awaiting lab confirmation', CONFIRMED:'Confirmed', COLLECTED:'Sample collected',
+  REPORT_READY:'Report ready', CANCELLED:'Cancelled'};
+
+function LabBookings(){
+  const s=useStore();
+  const [list,setList]=useState(null);
+  const load=()=>api('/lab-bookings').then(r=>setList(r.items)).catch(()=>setList([]));
+  useEffect(()=>{ load(); },[]);
+  const cancel=async(ref)=>{
+    try{ await api('/lab-bookings/'+ref+'/cancel',{method:'POST'}); s.toast('Booking cancelled'); load(); }
+    catch(e){ s.toast(e.message); }
+  };
+  if(list===null) return html`<div class="card card-pad" style=${{marginTop:16}}>Loading…</div>`;
+  if(!list.length) return html`<div class="card card-pad empty" style=${{marginTop:16}}>
+    <div style=${{fontWeight:700}}>No lab tests booked</div>
+    <button class="btn btn-primary" style=${{marginTop:12}} onClick=${()=>s.go('labs')}>Browse lab tests</button></div>`;
+  return list.map(b=>html`<div key=${b.reference} class="card card-pad" style=${{marginTop:12}}>
+    <div class="row between center wrap" style=${{gap:8}}>
+      <div><div style=${{fontWeight:700}}>${b.test?.name}</div>
+        <div class="sub" style=${{fontSize:12.5}}>${b.slot_label} · ${b.patient||''} · Ref ${b.reference} · ${inr(b.amount)}</div>
+        <div class="sub" style=${{fontSize:12.5}}>${b.address}</div></div>
+      <${Tag} kind=${b.status==='CANCELLED'?'coral':'teal'}>${LAB_STATUS[b.status]||b.status}</${Tag}>
+    </div>
+    ${b.can_cancel?html`<button class="btn btn-ghost btn-sm" style=${{marginTop:10}} onClick=${()=>cancel(b.reference)}>Cancel booking</button>`:null}
+  </div>`);
+}
+
+function Orders(){
+  const s=useStore();
+  const [tab,setTab]=useState(s.ordersTab||'medicines');
+  const [list,setList]=useState(null);
+  const [open,setOpen]=useState(s.orderId);
+  const [detail,setDetail]=useState(null);
+  const [busy,setBusy]=useState(false);
+  useEffect(()=>{ api('/orders').then(r=>setList(r.items)).catch(()=>setList([])); },[]);
+  useEffect(()=>{ setDetail(null); if(open) api('/orders/'+open).then(setDetail).catch(()=>setOpen(null)); },[open]);
+
+  const payNow=async()=>{
+    setBusy(true);
+    try{
+      const p=await api('/orders/'+open+'/pay',{method:'POST'});
+      const outcome=await payOnline(open, p);
+      if(outcome==='paid'){ s.toast('Payment received'); await s.refreshAccount(); }
+      setDetail(await api('/orders/'+open));
+    }catch(e){ s.toast(e.message); }
+    finally{ setBusy(false); }
+  };
+  const cancel=async()=>{
+    setBusy(true);
+    try{ const o=await api('/orders/'+open+'/cancel',{method:'POST'}); setDetail(o);
+      setList(l=>l.map(x=>x.id===o.id?o:x)); await s.refreshAccount(); s.toast('Order cancelled'); }
+    catch(e){ s.toast(e.message); }
+    finally{ setBusy(false); }
+  };
+
+  if(open) return html`<div class="page-enter">
+    <button class="chip" onClick=${()=>setOpen(null)} style=${{marginBottom:18}}><${Icon} name="chevL" size=16/> All orders</button>
+    ${!detail?html`<div class="card card-pad">Loading…</div>`:html`<div class="card card-pad">
+      <div class="row between center wrap" style=${{gap:10}}>
+        <div><div class="eyebrow">Order #${detail.id}</div>
+          <div class="sub">${new Date(detail.created_at+'Z').toLocaleString('en-IN')}</div></div>
+        <${Tag} kind=${statusTag(detail.status)}>${STATUS_TEXT[detail.status]||detail.status}</${Tag}>
+      </div>
+      <div style=${{marginTop:16}}>
+        ${detail.items.map((i,n)=>html`<div key=${n} class="row between" style=${{padding:'9px 0',borderBottom:'1px solid var(--line)'}}>
+          <div><div style=${{fontWeight:700}}>${i.name} × ${i.qty}</div><div class="sub" style=${{fontSize:12.5}}>${i.salt} · ${i.pack}</div></div>
+          <b>${inr(i.line_total)}</b></div>`)}
+        <div class="row between" style=${{marginTop:10}}><span class="sub">Delivery</span><span>${detail.delivery?inr(detail.delivery):'FREE'}</span></div>
+        <div class="row between" style=${{marginTop:6,fontWeight:800}}><span>Total (${detail.payment_method==='COD'?'cash on delivery':({PAID:'paid online',PENDING:'online, not paid yet',REFUND_PENDING:'refund pending'})[detail.payment_status]||'online'})</span><span>${inr(detail.total)}</span></div>
+        ${detail.awaiting_payment?html`<div class="card card-pad" style=${{marginTop:12,background:'var(--amber-soft)'}}>
+          <div style=${{fontWeight:700}}>Payment pending</div>
+          <p class="sub" style=${{fontSize:13.5,marginTop:4}}>We'll start preparing your order once payment is received.</p>
+          <button class="btn btn-primary" style=${{marginTop:10}} disabled=${busy} onClick=${payNow}>${busy?'Opening…':'Pay now · '+inr(detail.total)}</button></div>`:null}
+      </div>
+      ${detail.shipping_address?html`<div style=${{marginTop:16}}><div class="lbl">Delivering to</div><div class="sub">${detail.shipping_address}</div></div>`:null}
+      <div style=${{marginTop:16}}><div class="lbl" style=${{marginBottom:8}}>Timeline</div>
+        ${detail.timeline.map((t,n)=>html`<div key=${n} class="row" style=${{gap:10,padding:'6px 0'}}>
+          <span style=${{width:10,height:10,borderRadius:5,marginTop:5,background:'var(--teal-600)',flex:'none'}}/>
+          <div><b>${STATUS_TEXT[t.status]||t.status}</b> <span class="sub" style=${{fontSize:12.5}}>${new Date(t.at+'Z').toLocaleString('en-IN')}</span>
+          ${t.note?html`<div class="sub" style=${{fontSize:13}}>${t.note}</div>`:null}</div></div>`)}
+      </div>
+      ${detail.can_cancel?html`<button class="btn btn-outline" style=${{marginTop:16}} disabled=${busy} onClick=${cancel}>${busy?'Cancelling…':'Cancel order'}</button>`:null}
+    </div>`}
+  </div>`;
+
+  return html`<div class="page-enter">
+    <div class="eyebrow">Account</div>
+    <h1 class="h-xl" style=${{marginTop:6}}>My orders</h1>
+    <div class="row" style=${{gap:8,marginTop:14}}>
+      ${[['medicines','Medicines'],['labs','Lab tests']].map(([k,t])=>html`<button key=${k} class=${'chip'+(tab===k?' on':'')} onClick=${()=>setTab(k)}>${t}</button>`)}
+    </div>
+    ${tab==='labs'?html`<${LabBookings}/>`:list===null?html`<div class="card card-pad" style=${{marginTop:16}}>Loading…</div>`
+      :list.length===0?html`<div class="card card-pad empty" style=${{marginTop:16}}>
+          <div style=${{fontWeight:700}}>No orders yet</div>
+          <button class="btn btn-primary" style=${{marginTop:12}} onClick=${()=>s.go('pharmacy')}>Browse pharmacy</button></div>`
+      :list.map(o=>html`<div key=${o.id} class="card card-pad" style=${{marginTop:12,cursor:'pointer'}} onClick=${()=>setOpen(o.id)}>
+          <div class="row between center wrap" style=${{gap:8}}>
+            <div><div style=${{fontWeight:700}}>${o.items[0]?.name||'Order'}${o.items.length>1?' + '+(o.items.length-1)+' more':''}</div>
+              <div class="sub" style=${{fontSize:12.5}}>#${o.id} · ${new Date(o.created_at+'Z').toLocaleDateString('en-IN')} · ${inr(o.total)}</div></div>
+            <${Tag} kind=${statusTag(o.status)}>${STATUS_TEXT[o.status]||o.status}</${Tag}>
+          </div></div>`)}
+  </div>`;
+}
+
+/* ============================ PRESCRIPTION READER ============================
+   Upload (or type) a prescription, see each medicine matched to the catalogue
+   and the cheapest products with the SAME salts, strength and form. It never
+   suggests a different medicine: that is the prescriber's call. */
+function RxOption({p, label}){
+  const s=useStore();
+  const m=decorate(p);
+  const inCart=!!s.cart[m.id];
+  return html`<div class="rx-opt">
+    <div style=${{minWidth:0}}>
+      <div class="row center wrap" style=${{gap:8}}>
+        <span class="nm" style=${{cursor:'pointer'}} onClick=${()=>{rememberMeds([m]); s.openMed(m);}}>${m.name}</span>
+        ${label?html`<${Tag} kind="green">${label}</${Tag}>`:null}
+        ${m.rx?html`<${Tag} kind="coral">Rx</${Tag}>`:null}
+      </div>
+      <div class="sub" style=${{fontSize:13}}>${m.salt} · ${m.mfr} · ${m.pack}</div>
+    </div>
+    <div class="row center" style=${{gap:10}}>
+      <span class="rx-price">₹${m.price}</span>
+      <button class=${'btn btn-sm '+(inCart?'btn-ghost':'btn-primary')}
+        onClick=${()=>{ rememberMeds([m]); s.setQty(m, inCart?0:1); }}>
+        ${inCart?'Remove':html`<${Icon} name="cart" size=15/> Add`}</button>
+    </div>
+  </div>`;
+}
+
+function RxLine({line}){
+  const r=line.read;
+  const saving=line.best_saving;
+  return html`<div class="card card-pad rx-line">
+    <div class="rx-read">
+      <span style=${{fontWeight:800,fontSize:16}}>${r.name}</span>
+      ${r.strength?html`<span class="sub">${r.strength}</span>`:null}
+      ${r.dosage?html`<${Tag} kind="teal">${r.dosage}</${Tag}>`:null}
+      ${r.duration?html`<span class="sub">${r.duration}</span>`:null}
+      ${line.needs_review?html`<${Tag} kind="amber">Please check</${Tag}>`:null}
+    </div>
+    ${line.needs_review?html`<p class="sub" style=${{marginTop:6,fontSize:13}}>
+      ${r.confidence==='low'?'This was hard to read. ':''}Make sure the medicine below is exactly what your doctor wrote before ordering.</p>`:null}
+
+    ${line.match?html`<div style=${{marginTop:12}}>
+        <div class="eyebrow" style=${{marginBottom:4}}>Matched</div>
+        <${RxOption} p=${line.match}/>
+      </div>`:null}
+
+    ${line.options.length?html`<div style=${{marginTop:12}}>
+        <div class="eyebrow" style=${{marginBottom:4}}>
+          ${line.basis==='composition'?'Products with this composition, cheapest first':'Same composition, lower price'}</div>
+        ${saving?html`<p class="sub" style=${{fontSize:13,marginBottom:4}}>Save up to ₹${saving.amount} (${saving.percent}%) per pack.</p>`:null}
+        ${line.options.map((p,i)=>html`<${RxOption} key=${p.id} p=${p} label=${i===0?'Cheapest':''}/>`)}
+      </div>`
+      :(line.match?html`<p class="sub" style=${{marginTop:10}}>No cheaper product with the same composition in our catalogue.</p>`:null)}
+
+    ${!line.match && !line.options.length?html`<p class="sub" style=${{marginTop:10}}>
+      We couldn't find this medicine. Try typing it below, or search the pharmacy.</p>`:null}
+
+    ${line.candidates.length?html`<details style=${{marginTop:10}}>
+      <summary class="sub" style=${{cursor:'pointer'}}>Not the right medicine? Other close matches</summary>
+      ${line.candidates.map(p=>html`<${RxOption} key=${p.id} p=${p}/>`)}
+    </details>`:null}
+  </div>`;
+}
+
+function RxScan(){
+  const s=useStore();
+  const fileRef=useRef();
+  const [status,setStatus]=useState(null);
+  const [busy,setBusy]=useState(false);
+  const [error,setError]=useState(null);
+  const [result,setResult]=useState(null);
+  const [typed,setTyped]=useState({name:'',strength:''});
+
+  useEffect(()=>{ api('/prescriptions/status').then(setStatus).catch(()=>setStatus({reader_available:false})); },[]);
+
+  const upload=async(file)=>{
+    if(!file) return;
+    setBusy(true); setError(null);
+    const body=new FormData(); body.append('file', file);
+    try{ setResult(await api('/prescriptions/read',{method:'POST', body})); }
+    catch(e){ setError(e.message); }
+    finally{ setBusy(false); if(fileRef.current) fileRef.current.value=''; }
+  };
+
+  const addTyped=async()=>{
+    if(!typed.name.trim()) return;
+    setBusy(true); setError(null);
+    try{
+      const r=await api('/prescriptions/match',{method:'POST', body:{lines:[typed]}});
+      setResult(prev=>({lines:[...(prev?.lines||[]), ...r.lines], warnings:prev?.warnings||[], note:r.note}));
+      setTyped({name:'',strength:''});
+    }catch(e){ setError(e.message); }
+    finally{ setBusy(false); }
+  };
+
+  const reader=status?.reader_available;
+  return html`<div class="page-enter">
+    <button class="chip" onClick=${()=>s.go('pharmacy')} style=${{marginBottom:18}}><${Icon} name="chevL" size=16/> Back to pharmacy</button>
+    <div class="eyebrow">Prescription</div>
+    <h1 class="h-xl" style=${{marginTop:6}}>Find your medicines for less</h1>
+    <p class="sub" style=${{marginTop:6,maxWidth:640}}>Upload your doctor's prescription. We match each medicine and show products with exactly the same salts, strength and form at a lower price.</p>
+
+    <div class="card card-pad" style=${{marginTop:18}}>
+      <label class="rx-drop" style=${{opacity:busy?.7:1}}>
+        <${Icon} name="upload" size=30 style=${{color:'var(--teal-600)'}}/>
+        <div style=${{fontWeight:800,fontSize:17}}>${busy?'Reading your prescription…':'Take a photo or upload your prescription'}</div>
+        <div class="sub" style=${{fontSize:13}}>JPG, PNG, WEBP, HEIC or PDF · up to 8 MB · the whole page, in good light</div>
+        <span class="btn btn-primary" style=${{marginTop:4}}><${Icon} name="upload" size=16/> Choose photo</span>
+        <input ref=${fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf"
+          style=${{display:'none'}} disabled=${busy} onChange=${e=>upload(e.target.files[0])}/>
+      </label>
+      ${status && !reader?html`<div class="card card-pad" style=${{marginTop:10,background:'var(--amber-soft)',border:'1px solid #ffe2b0',fontSize:13.5}}>
+          <${Icon} name="info" size=14/> Reading photos isn't switched on yet. Type the medicines from your prescription below and we'll find them for you.</div>`
+        :html`<p class="sub" style=${{fontSize:12.5,marginTop:10}}>
+          <${Icon} name="lock" size=13/> Your prescription is sent to Google's Gemini service to be read. Nirog does not keep a copy. By uploading you agree to this.</p>`}
+
+      <div style=${{marginTop:18,fontWeight:700}}>Or type a medicine from your prescription</div>
+      <div class="rx-type">
+        <input placeholder="Name, e.g. Dolo 650 or Amoxicillin" value=${typed.name}
+          onInput=${e=>setTyped({...typed,name:e.target.value})} onKeyDown=${e=>e.key==='Enter'&&addTyped()}/>
+        <input placeholder="Strength (optional)" value=${typed.strength}
+          onInput=${e=>setTyped({...typed,strength:e.target.value})} onKeyDown=${e=>e.key==='Enter'&&addTyped()}/>
+        <button class="btn btn-primary" disabled=${busy} onClick=${addTyped}><${Icon} name="search" size=16/> Find</button>
+      </div>
+    </div>
+
+    ${error?html`<div class="card card-pad" style=${{marginTop:14,background:'var(--coral-soft)'}}>${error}</div>`:null}
+
+    ${result?html`<div style=${{marginTop:18}}>
+      ${(result.warnings||[]).map(w=>html`<div key=${w} class="card card-pad" style=${{marginBottom:10,background:'var(--amber-soft)'}}><${Icon} name="info" size=15/> ${w}</div>`)}
+      ${result.lines.length?null:html`<div class="card card-pad">No medicines were found on this prescription.</div>`}
+      ${result.lines.map((line,i)=>html`<${RxLine} key=${i} line=${line}/>`)}
+      <div class="card card-pad" style=${{marginTop:14,background:'var(--amber-soft)',border:'1px solid #ffe2b0'}}>
+        <div style=${{fontWeight:700}}><${Icon} name="shieldcheck" size=16/> Before you switch</div>
+        <p class="sub" style=${{marginTop:6}}>${result.note} Prescription (Rx) medicines are checked against your prescription by our pharmacist before dispatch.</p>
+      </div>
+    </div>`:null}
+  </div>`;
+}
+
+function Pharmacy(){
+  const s=useStore();
+  const [cat,setCat]=useState('All');
+  const [cats,setCats]=useState(()=>['All',...new Set(MEDS.map(m=>m.cat))]);
+  const [res,setRes]=useState({items:MEDS.slice(0,48), total:null, loading:false, error:null});
+
+  useEffect(()=>{
+    api('/catalog/categories')
+      .then(r=>setCats(['All',...(r.items||[]).map(c=>c.name)]))
+      .catch(()=>{});
+  },[]);
+
+  /* Search runs on the server. Filtering the 48 products loaded at boot
+     meant almost every search of the 254k-product catalogue found nothing. */
+  useEffect(()=>{
+    let live=true;
+    const q=(s.query||'').trim();
+    setRes(r=>Object.assign({}, r, {loading:true, error:null}));
+    const timer=setTimeout(()=>{
+      const params=new URLSearchParams({size:'48'});
+      if(q) params.set('q', q);
+      if(cat!=='All') params.set('category', cat);
+      api('/catalog/products?'+params.toString())
+        .then(r=>{
+          if(!live) return;
+          const items=(r.items||[]).map(decorate);
+          rememberMeds(items);
+          setRes({items, total:r.total, loading:false, error:null});
+        })
+        .catch(e=>{ if(live) setRes({items:[], total:0, loading:false, error:e.message}); });
+    }, q?300:0);
+    return ()=>{ live=false; clearTimeout(timer); };
+  },[s.query, cat]);
+
+  const list=res.items;
+  return html`<div class="page-enter">
+    <div class="row between center wrap" style=${{gap:12,marginBottom:6}}>
+      <div><div class="eyebrow">Online Pharmacy</div><h1 class="h-xl" style=${{marginTop:6}}>Medicines & wellness</h1>
+        <p class="sub" style=${{marginTop:6}}>Search any medicine to see its composition, uses, side-effects and cheaper generic substitutes.</p></div>
+      <button class="btn btn-outline" onClick=${()=>s.go('rxscan')}><${Icon} name="upload" size=17/> Upload prescription</button>
+    </div>
+
+    <div class="card card-pad" style=${{background:'linear-gradient(110deg,var(--mint),var(--teal-50))',border:'1px solid var(--teal-100)',marginTop:16}}>
+      <div class="row center between wrap" style=${{gap:14}}>
+        <div class="row center" style=${{gap:13}}>
+          <div class="qa-ic" style=${{background:'#fff',color:'var(--green)'}}><${Icon} name="percent" size=24/></div>
+          <div><div style=${{fontWeight:800,fontSize:16,fontFamily:'var(--display)'}}>Save up to 60% with generics</div>
+          <div class="sub">Same salt, same effect — we show you the cheapest verified substitute for every brand.</div></div>
+        </div>
+        <${Tag} kind="green">Verified by pharmacists</${Tag}>
+      </div>
+    </div>
+
+    <div class="scroll-x" style=${{marginTop:18}}>
+      ${cats.map(c=>html`<button key=${c} class=${'chip'+(cat===c?' on':'')} onClick=${()=>setCat(c)}>${c}</button>`)}
+    </div>
+
+    ${res.total!=null && html`<p class="sub" style=${{marginTop:14}}>
+      ${res.loading?'Searching…':(res.total>list.length
+        ?`Showing ${list.length} of ${res.total.toLocaleString('en-IN')} medicines — refine your search to narrow it down.`
+        :`${res.total.toLocaleString('en-IN')} medicine${res.total===1?'':'s'}`)}</p>`}
+
+    <div class="med-grid" style=${{marginTop:18}}>
+      ${list.length?list.map(m=>html`<${MedCard} key=${m.id} m=${m}/>`):html`<div class="empty" style=${{gridColumn:'1/-1'}}>
+        <div class="empty-ic"><${Icon} name="search" size=30/></div>
+        <div style=${{fontWeight:700}}>${res.loading?'Searching…':(res.error?'Search is unavailable':'No medicines found')}</div>
+        <p class="sub">${res.error?res.error:'Try a different name or salt.'}</p></div>`}
+    </div>
+  </div>`;
+}
+
+/* ============================== MEDICINE DETAIL ============================== */
+function MedDetail({m}){
+  const s=useStore();
+  const qty=s.cart[m.id]||0;
+  const {loading,detail,subs,error}=useMedDetail(m.id);
+  if(loading) return html`<div class="page-enter"><div class="card card-pad">Loading medicine information…</div></div>`;
+  if(error) return html`<div class="page-enter"><div class="card card-pad">
+    <h3 class="h-md">Couldn't load this medicine</h3>
+    <p class="sub" style=${{marginTop:8}}>${error}</p>
+    <button class="btn btn-ghost" style=${{marginTop:14}} onClick=${()=>s.go('pharmacy')}>Back to pharmacy</button></div></div>`;
+  m = Object.assign({}, m, detail, {color:m.color});
+  /* Only EXACT-tier matches are offered as a swap. RELATED items differ in
+     strength or form and are shown separately, never as one-tap substitutes. */
+  const exact = (subs && subs.exact) || [];
+  const related = (subs && subs.related) || [];
+  const cheapest = (subs && subs.best_saving) || null;
+  /* Reviewed per-molecule information; the 27 seeded demo products carry
+     their own. Nothing is shown that has not been written or reviewed. */
+  const legacy=(m.uses&&m.uses.length)?[{molecule:null,uses:m.uses,how:m.how,side:m.side||[],
+    safety:{},directions:m.directions,storage:m.storage,source:m.content?.source,reviewed_by:m.content?.reviewed_by}]:[];
+  const info=(m.info&&m.info.length)?m.info:legacy;
+  return html`<div class="page-enter">
+    <button class="chip" onClick=${()=>s.go('pharmacy')} style=${{marginBottom:18}}><${Icon} name="chevL" size=16/> Back to pharmacy</button>
+    <div class="md-head">
+      <div class="md-vis"><${Icon} name=${m.form==='Syrup'?'flask':'pill'} stroke=1.5 style=${{color:C[m.color]}}/></div>
+      <div>
+        <div class="row center" style=${{gap:8,marginBottom:8}}>
+          ${m.rx?html`<${Tag} kind="coral">Prescription</${Tag}>`:html`<${Tag} kind="green">Over-the-counter</${Tag}>`}
+          ${m.cat?html`<${Tag} kind="teal">${m.cat}</${Tag}>`:null}
+          ${m.rating?html`<div class="row center" style=${{gap:4}}><${Stars} r=${m.rating} size=14/><span style=${{fontWeight:700,fontSize:13}}>${m.rating}</span></div>`:null}
+        </div>
+        <h1 class="h-xl">${m.name}</h1>
+        <div class="sub" style=${{marginTop:6,fontSize:15}}><b style=${{color:'var(--ink-2)'}}>Composition:</b> ${m.salt}</div>
+        <div class="sub" style=${{marginTop:2}}>By ${m.mfr} · ${m.pack}</div>
+        <div class="row center" style=${{gap:14,marginTop:18,flexWrap:'wrap'}}>
+          <div class="med-price"><span class="now" style=${{fontSize:28}}>${inr(m.price)}</span>
+            ${m.mrp>m.price?html`<span class="was">${inr(m.mrp)}</span><${Tag} kind="green">${pct(m.mrp,m.price)}% off</${Tag}>`:html`<span class="sub">MRP, incl. of all taxes</span>`}</div>
+          ${m.per_unit?html`<span class="sub">${inr(m.per_unit)} per unit · ${m.pack_units} in pack</span>`:null}
+        </div>
+        <div class="row center" style=${{gap:12,marginTop:18}}>
+          ${qty>0?html`<div class="stepper" style=${{transform:'scale(1.1)',transformOrigin:'left'}}>
+              <button onClick=${()=>s.setQty(m,qty-1)}><${Icon} name="minus" size=17/></button>
+              <span class="qn">${qty}</span>
+              <button onClick=${()=>s.setQty(m,qty+1)}><${Icon} name="plus" size=17/></button></div>`
+            :html`<button class="btn btn-primary" onClick=${()=>s.setQty(m,1)}><${Icon} name="cart" size=18/> Add to cart</button>`}
+          <button class="btn btn-coral" onClick=${()=>{s.setQty(m,Math.max(1,qty));s.setCartOpen(true);}}>Buy now</button>
+        </div>
+        <div class="row center" style=${{gap:18,marginTop:18,flexWrap:'wrap'}}>
+          ${[['shieldcheck','Genuine medicines from licensed pharmacies'],['doc',m.rx?'Valid prescription required':'No prescription needed']].map((x,i)=>
+            html`<div key=${i} class="row center" style=${{gap:7,fontSize:12.5,fontWeight:600,color:'var(--ink-2)'}}>
+              <${Icon} name=${x[0]} size=16 style=${{color:'var(--teal-600)'}}/>${x[1]}</div>`)}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" style=${{gridTemplateColumns:'1.15fr .85fr',marginTop:28,alignItems:'start'}}>
+      <div class="card card-pad">
+        <h3 class="h-md" style=${{marginBottom:6}}>Medicine information</h3>
+        <div class="fact"><div class="fact-ic"><${Icon} name="flask" size=19/></div>
+          <div><div class="fact-t">Composition</div><div class="fact-d">${m.salt}</div></div></div>
+        <div class="fact"><div class="fact-ic"><${Icon} name="hospital" size=19/></div>
+          <div><div class="fact-t">Manufacturer</div><div class="fact-d">${m.mfr||'Not listed'}</div></div></div>
+        <div class="fact"><div class="fact-ic"><${Icon} name="shield" size=19/></div>
+          <div><div class="fact-t">Type</div><div class="fact-d">${m.rx?`Prescription medicine (Schedule ${m.schedule})`:'Over-the-counter'} · ${m.form} · ${m.pack}</div></div></div>
+
+        ${info.length===0?html`<div class="card card-pad" style=${{marginTop:14,background:'var(--mint)'}}>
+            <div style=${{fontWeight:700}}>Detailed information isn't available yet</div>
+            <p class="sub" style=${{marginTop:6,fontSize:13.5}}>Our pharmacists haven't reviewed uses, side effects and safety advice for this medicine yet. Read the leaflet in the pack, and ask your doctor or pharmacist how to take it.</p></div>`
+        :info.map((x,k)=>html`<div key=${k} style=${{marginTop:16,paddingTop:14,borderTop:'1px solid var(--line)'}}>
+          ${x.molecule&&info.length>1?html`<div class="eyebrow" style=${{marginBottom:6}}>About ${x.molecule}</div>`:null}
+          ${x.uses?.length?html`<div class="fact"><div class="fact-ic"><${Icon} name="info" size=19/></div>
+            <div><div class="fact-t">Uses</div><div class="fact-d">${x.uses.join(' · ')}</div></div></div>`:null}
+          ${x.how?html`<div class="fact"><div class="fact-ic"><${Icon} name="zap" size=19/></div>
+            <div><div class="fact-t">How it works</div><div class="fact-d">${x.how}</div></div></div>`:null}
+          ${x.side?.length?html`<div class="fact"><div class="fact-ic"><${Icon} name="thermo" size=19/></div>
+            <div><div class="fact-t">Common side effects</div><div class="fact-d">${x.side.join(' · ')}</div></div></div>`:null}
+          ${Object.keys(x.safety||{}).length?html`<div style=${{marginTop:10}}>
+            <div class="fact-t" style=${{marginBottom:8}}>Safety advice</div>
+            <div class="safety-grid">${Object.entries(x.safety).map(([topic,v])=>html`<div key=${topic} class=${'safety '+v.level}>
+              <div class="row between center"><b style=${{textTransform:'capitalize'}}>${topic}</b><span class="safety-l">${({safe:'Safe',caution:'Caution',unsafe:'Unsafe',consult:'Ask your doctor'})[v.level]}</span></div>
+              ${v.note?html`<div style=${{fontSize:12.5,marginTop:4}}>${v.note}</div>`:null}</div>`)}</div></div>`:null}
+          ${x.directions?html`<div class="fact"><div class="fact-ic"><${Icon} name="clock" size=19/></div>
+            <div><div class="fact-t">Directions</div><div class="fact-d">${x.directions}</div></div></div>`:null}
+          ${x.storage?html`<div class="fact"><div class="fact-ic"><${Icon} name="shield" size=19/></div>
+            <div><div class="fact-t">Storage</div><div class="fact-d">${x.storage}</div></div></div>`:null}
+          <div class="sub" style=${{fontSize:11.5,marginTop:6}}>Source: ${x.source||'not recorded'}${x.reviewed_by?` · Reviewed by ${x.reviewed_by}`:' · Not reviewed'}${x.reviewed_at?` on ${new Date(x.reviewed_at).toLocaleDateString('en-IN')}`:''}</div>
+        </div>`)}
+      </div>
+
+      <div class="card card-pad" style=${{background:'linear-gradient(160deg,#fff,var(--mint-2))'}}>
+        <div class="row between center"><h3 class="h-md">Cheaper substitutes</h3><${Tag} kind="green">Same salt</${Tag}></div>
+        <p class="sub" style=${{margin:'6px 0 16px'}}>Same active ingredient at the same strength, verified against composition — not brand name.</p>
+        ${exact.length===0?html`<p class="sub">No same-salt substitute is listed for this pack right now.</p>`:null}
+        ${exact.map((sub,i)=>{
+          const isBest = cheapest && sub.id===cheapest.id && sub.saving>0;
+          return html`<div key=${sub.id} class=${'subst-row'+(isBest?' best':'')} style=${{marginBottom:10}}>
+            <div class="subst-ic"><${Icon} name="pill" size=22/></div>
+            <div style=${{flex:1,minWidth:0}}>
+              <div class="row center" style=${{gap:7}}><span style=${{fontWeight:700,fontSize:14}}>${sub.name}</span>
+                ${isBest?html`<${Tag} kind="green">Best price</${Tag}>`:null}
+                ${sub.rx?html`<${Tag} kind="coral">Rx</${Tag}>`:null}</div>
+              <div class="sub" style=${{fontSize:12}}>${sub.mfr} \u00b7 ${sub.salt}</div>
+            </div>
+            <div style=${{textAlign:'right'}}>
+              <div style=${{fontWeight:800,fontFamily:'var(--display)',fontSize:16}}>${inr(sub.price)}</div>
+              ${sub.saving>0?html`<div class="save-pill" style=${{marginTop:4}}>Save ${inr(sub.saving)}</div>`
+                :html`<div class="sub" style=${{fontSize:11}}>${inr(sub.mrp)} MRP</div>`}
+            </div>
+          </div>`;
+        })}
+        ${cheapest && cheapest.saving>0 ? html`<button class="btn btn-ghost btn-block" style=${{marginTop:6}}
+          onClick=${()=>s.addToCart(cheapest)}>Switch to ${cheapest.name} & save ${inr(cheapest.saving)}</button>` : null}
+        ${related.length?html`<div style=${{marginTop:18,paddingTop:16,borderTop:'1px solid var(--line)'}}>
+          <div class="row between center"><h4 style=${{fontFamily:'var(--display)',fontSize:14,fontWeight:700}}>Related packs</h4>
+            <${Tag} kind="amber">Different strength</${Tag}></div>
+          <p class="sub" style=${{margin:'6px 0 12px',fontSize:12}}>These contain the same ingredient at a different strength or in a different form. They are <b>not</b> a like-for-like swap \u2014 ask your doctor or pharmacist before switching.</p>
+          ${related.map(sub=>html`<div key=${sub.id} class="subst-row" style=${{marginBottom:8,opacity:.9}}>
+            <div class="subst-ic"><${Icon} name="pill" size=20/></div>
+            <div style=${{flex:1,minWidth:0}}>
+              <div style=${{fontWeight:700,fontSize:13.5}}>${sub.name}</div>
+              <div class="sub" style=${{fontSize:12}}>${sub.mfr} \u00b7 ${sub.salt}</div>
+            </div>
+            <div style=${{fontWeight:800,fontFamily:'var(--display)',fontSize:15}}>${inr(sub.price)}</div>
+          </div>`)}
+        </div>`:null}
+      </div>
+    </div>
+
+    <div class="card card-pad" style=${{marginTop:18,background:'var(--amber-soft)',border:'1px solid #ffe2b0'}}>
+      <div class="row" style=${{gap:11,alignItems:'flex-start'}}>
+        <${Icon} name="info" size=20 style=${{color:'var(--amber)',flexShrink:0,marginTop:1}}/>
+        <div class="sub" style=${{fontSize:12.5,lineHeight:1.6,color:'var(--ink-2)'}}>
+          ${m.rx?html`<b style=${{color:'var(--ink)'}}>Prescription required.</b> This medicine is sold only against a valid doctor's prescription. Upload one at checkout — our pharmacist will verify before dispatch. `:html`<b style=${{color:'var(--ink)'}}>Over-the-counter.</b> No prescription needed, but `}
+          This information is for awareness only and is not a substitute for professional medical advice. Always consult a qualified doctor before starting or changing medication.
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+/* ============================== DOCTORS ============================== */
+function Doctors(){
+  const s=useStore();
+  const [spec,setSpec]=useState(null);
+  const [mode,setMode]=useState('All');
+  let list=DOCTORS.filter(d=>(!spec||d.specId===spec) &&
+    (!s.query||d.name.toLowerCase().includes(s.query.toLowerCase())||d.spec.toLowerCase().includes(s.query.toLowerCase())));
+  if(mode==='Online now') list=list.filter(d=>d.online);
+  return html`<div class="page-enter">
+    <div class="eyebrow">Telemedicine</div>
+    <h1 class="h-xl" style=${{marginTop:6}}>Consult a doctor</h1>
+    <p class="sub" style=${{marginTop:6,maxWidth:560}}>Video, audio or chat with verified specialists. Average wait under 5 minutes, with a free follow-up for 7 days.</p>
+
+    <${SectionHead} title="Find by specialty"/>
+    <div class="spec-grid">
+      <div class=${'spec'} onClick=${()=>setSpec(null)} style=${{borderColor:spec===null?'var(--teal-400)':'',background:spec===null?'var(--teal-50)':''}}>
+        <div class="spec-ic" style=${{background:soft.teal,color:C.teal}}><${Icon} name="grid" size=24/></div>
+        <div class="spec-n">All doctors</div><div class="spec-c">${DOCTORS.length} available</div></div>
+      ${SPECS.map(sp=>html`<div key=${sp.id} class="spec" onClick=${()=>setSpec(sp.id)}
+         style=${{borderColor:spec===sp.id?'var(--teal-400)':'',background:spec===sp.id?'var(--teal-50)':''}}>
+        <div class="spec-ic" style=${{background:soft[sp.color],color:C[sp.color]}}><${Icon} name=${sp.icon} size=24/></div>
+        <div class="spec-n">${sp.name}</div><div class="spec-c">${sp.count} doctors</div></div>`)}
+    </div>
+
+    <div class="section-head"><h2 class="h-lg">${list.length} doctors available</h2>
+      <div class="row" style=${{gap:8}}>
+        ${['All','Online now'].map(m=>html`<button key=${m} class=${'chip'+(mode===m?' on':'')} onClick=${()=>setMode(m)}>${m}</button>`)}</div>
+    </div>
+    <div class="grid" style=${{gridTemplateColumns:'1fr 1fr'}}>
+      ${list.map(d=>html`<div key=${d.id} class="doc-card">
+        <${Avatar} name=${d.name} color=${d.color} size=72 radius=18 online=${d.online}/>
+        <div class="doc-meta">
+          <div class="doc-name">${d.name}</div>
+          <div class="doc-spec">${d.spec}</div>
+          <div class="doc-sub">${d.qual} · ${d.exp} yrs exp</div>
+          <div class="doc-stats">
+            <div class="doc-stat"><${Icon} name="star" size=14 style=${{color:'var(--amber)',fill:'var(--amber)'}}/> ${d.rating} (${(d.reviews/1000).toFixed(1)}k)</div>
+            <div class="doc-stat"><${Icon} name="clock" size=14 style=${{color:'var(--teal-600)'}}/> ${d.slot}</div>
+          </div>
+          <div class="row center between" style=${{marginTop:13}}>
+            <div><span style=${{fontWeight:800,fontFamily:'var(--display)',fontSize:17}}>${inr(d.fee)}</span>
+              <span class="sub" style=${{fontSize:12}}> consult</span></div>
+            <button class="btn btn-primary btn-sm" onClick=${()=>s.openDoc(d)}>Consult now</button>
+          </div>
+        </div>
+      </div>`)}
+    </div>
+  </div>`;
+}
+function DocProfile({d}){
+  const s=useStore();
+  const [slot,setSlot]=useState(null);
+  const [cmode,setCmode]=useState('video');
+  const slots=['Today 5:30','Today 6:15','Today 7:00','Tom 10:30','Tom 11:15','Tom 4:00'];
+  const modes=[['video','Video','video'],['audio','Audio','phone'],['chat','Chat','chat']];
+  return html`<div class="page-enter">
+    <button class="chip" onClick=${()=>s.go('doctors')} style=${{marginBottom:18}}><${Icon} name="chevL" size=16/> Back to doctors</button>
+    <div class="grid" style=${{gridTemplateColumns:'1.3fr .9fr',alignItems:'start'}}>
+      <div class="card card-pad">
+        <div class="row" style=${{gap:18}}>
+          <${Avatar} name=${d.name} color=${d.color} size=84 radius=22 online=${d.online}/>
+          <div>
+            <h1 class="h-lg">${d.name}</h1>
+            <div class="doc-spec" style=${{fontSize:14.5}}>${d.spec}</div>
+            <div class="doc-sub">${d.qual} · ${d.exp} years experience</div>
+            <div class="row center" style=${{gap:6,marginTop:8}}><${Stars} r=${d.rating}/>
+              <span style=${{fontWeight:700,fontSize:13.5}}>${d.rating}</span>
+              <span class="sub" style=${{fontSize:12.5}}>· ${d.reviews.toLocaleString('en-IN')} reviews</span></div>
+          </div>
+        </div>
+        <div class="divider"/>
+        <div class="grid" style=${{gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+          ${[['award',d.exp+' yrs','Experience'],['users',(d.reviews/1000).toFixed(1)+'k','Patients'],['pin',d.hospital.split(',')[0],'Clinic']].map((x,i)=>
+            html`<div key=${i} style=${{textAlign:'center',padding:'12px 8px',background:'var(--mint-2)',borderRadius:14}}>
+              <${Icon} name=${x[0]} size=20 style=${{color:'var(--teal-600)',margin:'0 auto 6px'}}/>
+              <div style=${{fontWeight:800,fontFamily:'var(--display)',fontSize:14}}>${x[1]}</div>
+              <div class="sub" style=${{fontSize:11}}>${x[2]}</div></div>`)}
+        </div>
+        <div class="divider"/>
+        <h3 class="h-md" style=${{marginBottom:8}}>About</h3>
+        <p class="sub" style=${{fontSize:14,lineHeight:1.6}}>${d.about}</p>
+        <h3 class="h-md" style=${{margin:'18px 0 10px'}}>Speaks</h3>
+        <div class="row wrap" style=${{gap:8}}>${d.langs.map(l=>html`<${Tag} key=${l} kind="teal">${l}</${Tag}>`)}</div>
+      </div>
+
+      <div class="card card-pad" style=${{position:'sticky',top:88}}>
+        <h3 class="h-md" style=${{marginBottom:12}}>Book consultation</h3>
+        <div class="sub" style=${{marginBottom:8,fontWeight:600}}>Choose mode</div>
+        <div class="row" style=${{gap:8,marginBottom:16}}>
+          ${modes.map(m=>html`<button key=${m[0]} class=${'chip'+(cmode===m[0]?' on':'')} style=${{flex:1,justifyContent:'center'}}
+             onClick=${()=>setCmode(m[0])}><${Icon} name=${m[2]} size=16/> ${m[1]}</button>`)}
+        </div>
+        <div class="sub" style=${{marginBottom:8,fontWeight:600}}>Available slots</div>
+        <div class="grid" style=${{gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:18}}>
+          ${slots.map(sl=>html`<button key=${sl} class=${'slot'+(slot===sl?' on':'')} onClick=${()=>setSlot(sl)}>${sl}</button>`)}
+        </div>
+        <div class="row between center" style=${{padding:'12px 0',borderTop:'1px solid var(--line)',borderBottom:'1px solid var(--line)',marginBottom:16}}>
+          <span class="sub">Consultation fee</span>
+          <div><span style=${{fontWeight:800,fontFamily:'var(--display)',fontSize:20}}>${inr(d.fee)}</span>
+            <span class="sub" style=${{fontSize:12,textDecoration:'line-through',marginLeft:6}}>${inr(d.fee+150)}</span></div>
+        </div>
+        <button class="btn btn-primary btn-block" onClick=${()=>{ if(!slot){s.toast('Pick a slot first');return;} s.startConsult(d,cmode); }}>
+          <${Icon} name=${modes.find(m=>m[0]===cmode)[2]} size=18/> Start ${cmode} consult</button>
+        <div class="row center" style=${{gap:6,marginTop:12,justifyContent:'center'}}>
+          <${Icon} name="shieldcheck" size=15 style=${{color:'var(--green)'}}/>
+          <span class="sub" style=${{fontSize:12}}>Free 7-day follow-up included</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== CONSULT (live chat) ============================== */
+function Consult({d,mode}){
+  const s=useStore();
+  const [msgs,setMsgs]=useState([
+    {who:'them',t:`Hello! I'm ${d.name}. I've reviewed your profile. What brings you in today?`},
+  ]);
+  const [txt,setTxt]=useState('');
+  const [typing,setTyping]=useState(false);
+  const bodyRef=useRef();
+  useEffect(()=>{ if(bodyRef.current) bodyRef.current.scrollTop=bodyRef.current.scrollHeight; },[msgs,typing]);
+  const reply=(userText)=>{
+    setTyping(true);
+    const t=userText.toLowerCase();
+    let r="Thank you for sharing that. How long have you had these symptoms, and is anything making them better or worse?";
+    if(/fever|temperature/.test(t)) r="Noted — fever can have many causes. Any cough, body ache or sore throat? I'd suggest paracetamol 500mg and staying hydrated; if it crosses 102°F or lasts beyond 3 days, we'll run a quick blood test.";
+    else if(/cough|cold|throat/.test(t)) r="Sounds like an upper respiratory infection. Is the cough dry or with phlegm? Steam inhalation and warm fluids help. I'll send an e-prescription if needed.";
+    else if(/acid|gas|stomach|reflux/.test(t)) r="That points to acidity/reflux. Try avoiding spicy and late meals. I can prescribe Pan-D before breakfast for 5 days — shall I add it to your prescription?";
+    else if(/headache|migrain/.test(t)) r="Got it. Is it one-sided or all over, and any sensitivity to light? Let's start with hydration and rest; I'll note a mild analgesic.";
+    else if(/sugar|diabet|hba1c/.test(t)) r="Good that you're tracking it. Your last HbA1c was 6.1% which is well controlled. Continue Metformin and we'll recheck in 3 months.";
+    else if(/thank|ok|okay|got it/.test(t)) r="You're welcome. I'm sending your e-prescription now. Take care, and reach out anytime during your free 7-day follow-up.";
+    setTimeout(()=>{ setTyping(false); setMsgs(m=>[...m,{who:'them',t:r}]); }, 1200+Math.random()*600);
+  };
+  const send=()=>{ const v=txt.trim(); if(!v)return; setMsgs(m=>[...m,{who:'me',t:v}]); setTxt(''); reply(v); };
+  return html`<div class="page-enter">
+    <button class="chip" onClick=${()=>s.go('doctors')} style=${{marginBottom:16}}><${Icon} name="chevL" size=16/> End consult</button>
+    <div class="grid" style=${{gridTemplateColumns:'1fr 320px',alignItems:'start'}}>
+      <div class="chat-wrap">
+        <div class="chat-head">
+          <${Avatar} name=${d.name} color=${d.color} size=42 radius=13 online=true/>
+          <div style=${{flex:1}}><div style=${{fontWeight:700,fontSize:14.5}}>${d.name}</div>
+            <div class="row center" style=${{gap:5}}><span class="doc-on" style=${{position:'static',width:8,height:8,border:'none'}}/>
+            <span class="sub" style=${{fontSize:12}}>${mode==='video'?'Video consult · connected':mode==='audio'?'Audio consult · connected':'Online now'}</span></div></div>
+          ${mode!=='chat'?html`<button class="icon-btn" style=${{width:40,height:40}} onClick=${()=>s.toast(mode+' call is a demo')}><${Icon} name=${mode==='video'?'video':'phone'} size=18/></button>`:null}
+          <button class="icon-btn" style=${{width:40,height:40}} onClick=${()=>s.toast('Call ended')}><${Icon} name="x" size=18/></button>
+        </div>
+        <div class="chat-body" ref=${bodyRef}>
+          ${mode==='video'?html`<div style=${{background:'linear-gradient(135deg,#0a4d42,#0e7c6b)',borderRadius:18,height:160,display:'grid',placeItems:'center',marginBottom:6,position:'relative',overflow:'hidden'}}>
+            <${Avatar} name=${d.name} color=${d.color} size=64 radius=20/>
+            <div style=${{position:'absolute',bottom:10,left:10,color:'#fff',fontSize:12,fontWeight:600,background:'rgba(0,0,0,.3)',padding:'4px 10px',borderRadius:8}}>${d.name.split(' ')[1]} · live</div>
+            <div style=${{position:'absolute',bottom:10,right:10,width:54,height:70,borderRadius:10,background:'rgba(255,255,255,.18)',border:'1.5px solid rgba(255,255,255,.4)',display:'grid',placeItems:'center',color:'#fff',fontSize:10}}>You</div>
+          </div>`:null}
+          ${msgs.map((m,i)=>html`<div key=${i} class=${'bubble '+(m.who==='me'?'me':'them')}>${m.t}</div>`)}
+          ${typing?html`<div class="bubble them typing"><span/><span/><span/></div>`:null}
+        </div>
+        <div class="chat-input">
+          <button class="icon-btn" style=${{width:42,height:42}} onClick=${()=>s.toast('Attach a report')}><${Icon} name="upload" size=18/></button>
+          <input placeholder="Describe your symptoms…" value=${txt}
+            onInput=${e=>setTxt(e.target.value)} onKeyDown=${e=>e.key==='Enter'&&send()}/>
+          <button class="btn btn-primary" style=${{padding:'11px 16px'}} onClick=${send}><${Icon} name="send" size=18/></button>
+        </div>
+      </div>
+
+      <div>
+        <div class="card card-pad">
+          <div class="row center" style=${{gap:12}}>
+            <${Avatar} name=${d.name} color=${d.color} size=52 radius=16/>
+            <div><div style=${{fontWeight:700,fontSize:15}}>${d.name}</div>
+              <div class="sub" style=${{fontSize:12.5}}>${d.spec} · ${d.exp} yrs</div>
+              <div class="row center" style=${{gap:5,marginTop:3}}><${Stars} r=${d.rating} size=12/><span class="sub" style=${{fontSize:11.5}}>${d.rating}</span></div></div>
+          </div>
+          <div class="divider"/>
+          <div class="row between" style=${{fontSize:13,marginBottom:7}}><span class="sub">Consult mode</span><b style=${{textTransform:'capitalize'}}>${mode}</b></div>
+          <div class="row between" style=${{fontSize:13,marginBottom:7}}><span class="sub">Consult fee</span><b>${inr(d.fee)}</b></div>
+          <div class="row between" style=${{fontSize:13}}><span class="sub">Follow-up</span><b style=${{color:'var(--green)'}}>Free · 7 days</b></div>
+        </div>
+
+        <div class="card card-pad" style=${{marginTop:14}}>
+          <div class="lbl" style=${{marginBottom:11}}>After your consult</div>
+          <div style=${{display:'flex',flexDirection:'column',gap:9}}>
+            <button class="btn btn-outline btn-block" onClick=${()=>s.toast('e-Prescription saved to your records')}><${Icon} name="doc" size=16/> Get e-prescription</button>
+            <button class="btn btn-outline btn-block" onClick=${()=>{s.go('pharmacy');}}><${Icon} name="pill" size=16/> Order medicines</button>
+            <button class="btn btn-outline btn-block" onClick=${()=>{s.go('labs');}}><${Icon} name="flask" size=16/> Book lab tests</button>
+          </div>
+        </div>
+
+        <div class="card card-pad" style=${{marginTop:14,background:'var(--mint)'}}>
+          <div class="row center" style=${{gap:8}}><${Icon} name="lock" size=16 style=${{color:'var(--teal-700)'}}/>
+            <span class="sub" style=${{fontSize:12}}>End-to-end encrypted · this chat is private to you and your doctor.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+/* ============================== LABS ============================== */
+function Labs(){
+  const s=useStore();
+  const [tab,setTab]=useState('book');
+  return html`<div class="page-enter">
+    <div class="eyebrow">Diagnostics</div>
+    <h1 class="h-xl" style=${{marginTop:6}}>Lab tests & health checks</h1>
+    <p class="sub" style=${{marginTop:6,maxWidth:560}}>NABL-accredited labs, free home sample collection, and digital reports with trend analysis you can actually understand.</p>
+
+    <div class="row" style=${{gap:8,margin:'18px 0'}}>
+      <button class=${'chip'+(tab==='book'?' on':'')} onClick=${()=>setTab('book')}><${Icon} name="flask" size=15/> Book a test</button>
+      <button class=${'chip'+(tab==='reports'?' on':'')} onClick=${()=>setTab('reports')}><${Icon} name="trending" size=15/> My reports & trends</button>
+    </div>
+
+    ${tab==='book'?html`<div class="fade-up">
+      <div class="card card-pad" style=${{background:'linear-gradient(110deg,var(--violet-soft),#fff)',border:'1px solid #e2daff'}}>
+        <div class="row center between wrap" style=${{gap:14}}>
+          <div class="row center" style=${{gap:14}}>
+            <div class="qa-ic" style=${{background:'#fff',color:'var(--violet)'}}><${Icon} name="truck" size=24/></div>
+            <div><div style=${{fontWeight:800,fontSize:16.5,fontFamily:'var(--display)'}}>Free home sample collection</div>
+            <div class="sub">A certified technician comes to you. Track them live, get reports in your app.</div></div>
+          </div>
+          <button class="btn btn-primary" onClick=${()=>setTab('reports')}>Track my pickup</button>
+        </div>
+      </div>
+
+      <${SectionHead} title="Popular health packages" action="View all" onAction=${()=>s.go('preventive')}/>
+      <div class="grid" style=${{gridTemplateColumns:'repeat(auto-fill,minmax(230px,1fr))'}}>
+        ${PACKAGES.map(p=>html`<div key=${p.id} class="lab-card">
+          <div class="qa-ic" style=${{width:44,height:44,background:soft[p.color],color:C[p.color],marginBottom:12}}><${Icon} name="shield2" size=22/></div>
+          <div style=${{fontWeight:700,fontSize:15.5,fontFamily:'var(--display)'}}>${p.name}</div>
+          <div class="sub" style=${{fontSize:12.5,marginTop:3}}>${p.tests} parameters · ${p.for}</div>
+          <div class="row center between" style=${{marginTop:14}}>
+            <div><span style=${{fontWeight:800,fontFamily:'var(--display)',fontSize:18}}>${inr(p.price)}</span>
+              <span class="was" style=${{fontSize:12,marginLeft:5,color:'var(--faint)',textDecoration:'line-through'}}>${inr(p.mrp)}</span></div>
+            <button class="btn btn-ghost btn-sm" onClick=${()=>s.bookLab(p)}>Book</button></div>
+        </div>`)}
+      </div>
+
+      <${SectionHead} title="Individual tests"/>
+      <div class="grid" style=${{gridTemplateColumns:'1fr 1fr'}}>
+        ${LABS.map(l=>html`<div key=${l.id} class="lab-card">
+          <div class="row between center">
+            <div class="row center" style=${{gap:6}}>
+              ${l.popular?html`<${Tag} kind="coral">${l.tag||'Popular'}</${Tag}>`:l.tag?html`<${Tag} kind="teal">${l.tag}</${Tag}>`:null}
+            </div>
+            ${pct(l.mrp,l.price)>0?html`<${Tag} kind="green">${pct(l.mrp,l.price)}% off</${Tag}>`:null}
+          </div>
+          <div style=${{fontWeight:700,fontSize:15.5,fontFamily:'var(--display)',marginTop:10}}>${l.name}</div>
+          <div class="row wrap" style=${{gap:14,margin:'10px 0'}}>
+            <span class="doc-stat"><${Icon} name="drop" size=14 style=${{color:'var(--rose)'}}/> ${l.sample}</span>
+            <span class="doc-stat"><${Icon} name="clock" size=14 style=${{color:'var(--teal-600)'}}/> Report in ${l.time}</span>
+            <span class="doc-stat"><${Icon} name="info" size=14 style=${{color:'var(--blue)'}}/> ${l.params} param${l.params>1?'s':''}</span>
+            ${l.fasting?html`<span class="doc-stat"><${Icon} name="thermo" size=14 style=${{color:'var(--amber)'}}/> Fasting</span>`:null}
+          </div>
+          <div class="row center between">
+            <div><span style=${{fontWeight:800,fontFamily:'var(--display)',fontSize:18}}>${inr(l.price)}</span>
+              <span class="was" style=${{fontSize:12,marginLeft:6,color:'var(--faint)',textDecoration:'line-through'}}>${inr(l.mrp)}</span></div>
+            <button class="btn btn-primary btn-sm" onClick=${()=>s.bookLab(l)}><${Icon} name="plus" size=15/> Add</button></div>
+        </div>`)}
+      </div>
+    </div>`:html`<${LabReports}/>`}
+  </div>`;
+}
+function LabReports(){
+  const s=useStore();
+  return html`<div class="fade-up">
+    <div class="card card-pad" style=${{marginBottom:18}}>
+      <div class="row between center wrap" style=${{gap:12}}>
+        <div class="row center" style=${{gap:13}}>
+          <div class="qa-ic" style=${{width:44,height:44,background:soft.blue,color:C.blue}}><${Icon} name="truck" size=22/></div>
+          <div><div style=${{fontWeight:700,fontSize:15}}>Technician on the way</div>
+          <div class="sub" style=${{fontSize:12.5}}>Ramesh K. · arriving in ~18 min · Full Body Checkup</div></div>
+        </div>
+        <${Tag} kind="blue">Live tracking</${Tag}>
+      </div>
+      <div class="pbar" style=${{marginTop:14}}><i style=${{width:'62%'}}/></div>
+      <div class="row between" style=${{marginTop:8}}>
+        ${['Confirmed','On the way','Sample taken','Report ready'].map((st,i)=>
+          html`<span key=${i} class="sub" style=${{fontSize:11,fontWeight:i<2?700:500,color:i<2?'var(--teal-700)':'var(--faint)'}}>${st}</span>`)}
+      </div>
+    </div>
+
+    <h3 class="h-md" style=${{marginBottom:14}}>Your health trends</h3>
+    <div class="grid" style=${{gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))'}}>
+      ${Object.entries(TRENDS).map(([k,t])=>html`<div key=${k} class="trend-card">
+        <div class="row between center" style=${{marginBottom:8}}>
+          <div><div style=${{fontWeight:700,fontSize:14.5,fontFamily:'var(--display)'}}>${t.label}</div>
+            <div class="sub" style=${{fontSize:12}}>Target: ${t.good} ${t.unit}</div></div>
+          <${Tag} kind="green">${t.dir==='down'?'▼':'▲'} Improving</${Tag}>
+        </div>
+        <${TrendChart} data=${t.data} color=${t.color} unit=${' '+t.unit}/>
+      </div>`)}
+    </div>
+
+    <h3 class="h-md" style=${{margin:'24px 0 14px'}}>Recent reports</h3>
+    <div class="grid">
+      ${RECORDS.filter(r=>r.type==='lab').concat(RECORDS.filter(r=>r.type==='radiology')).map(r=>html`<div key=${r.id} class="card card-pad row between center">
+        <div class="row center" style=${{gap:13}}>
+          <div class="qa-ic" style=${{width:44,height:44,background:soft[r.color],color:C[r.color]}}><${Icon} name=${r.icon} size=22/></div>
+          <div><div style=${{fontWeight:700,fontSize:14.5}}>${r.title}</div>
+          <div class="sub" style=${{fontSize:12.5}}>${r.by} · ${r.date}</div></div>
+        </div>
+        <div class="row" style=${{gap:8}}>
+          <button class="btn btn-outline btn-sm" onClick=${()=>s.toast('Opening report…')}><${Icon} name="eye" size=15/> View</button>
+          <button class="btn btn-ghost btn-sm" onClick=${()=>s.toast('Report downloaded')}><${Icon} name="download" size=15/></button>
+        </div>
+      </div>`)}
+    </div>
+  </div>`;
+}
+
+/* ============================== HEALTH RECORDS ============================== */
+function Records(){
+  const s=useStore();
+  const [filter,setFilter]=useState('All');
+  const types=[['All','grid'],['consult','stethoscope'],['lab','flask'],['rx','pill'],['radiology','lungs'],['vaccine','shield']];
+  const tname={consult:'Consults',lab:'Lab reports',rx:'Prescriptions',radiology:'Radiology',vaccine:'Vaccines'};
+  const list=RECORDS.filter(r=>filter==='All'||r.type===filter);
+  return html`<div class="page-enter">
+    <div class="row between center wrap" style=${{gap:12}}>
+      <div><div class="eyebrow">Digital Health Records</div>
+        <h1 class="h-xl" style=${{marginTop:6}}>Your health, on a timeline</h1>
+        <p class="sub" style=${{marginTop:6,maxWidth:540}}>Every consult, prescription and report — auto-organised and searchable. Upload paper records and our AI files them for you.</p></div>
+      <button class="btn btn-coral" onClick=${()=>s.toast('Upload — AI will read & categorise it')}><${Icon} name="upload" size=17/> Upload record</button>
+    </div>
+
+    <div class="grid" style=${{gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',marginTop:20}}>
+      ${[['folder','12','Total records','teal'],['stethoscope','5','Consultations','coral'],['flask','3','Lab reports','blue'],['shield','4','Vaccinations','green']].map((x,i)=>
+        html`<div key=${i} class="stat-tile">
+          <div class="stat-ic" style=${{background:soft[x[3]],color:C[x[3]]}}><${Icon} name=${x[0]} size=21/></div>
+          <div class="stat-n">${x[1]}</div><div class="stat-l">${x[2]}</div></div>`)}
+    </div>
+
+    <div class="scroll-x" style=${{marginTop:22}}>
+      ${types.map(t=>html`<button key=${t[0]} class=${'chip'+(filter===t[0]?' on':'')} onClick=${()=>setFilter(t[0])}>
+        <${Icon} name=${t[1]} size=15/> ${t[0]==='All'?'All records':tname[t[0]]}</button>`)}
+    </div>
+
+    <div style=${{marginTop:22}} class="timeline">
+      ${list.map(r=>html`<div key=${r.id} class="tl-item">
+        <div class="tl-dot" style=${{background:C[r.color]}}><${Icon} name="check" size=10 style=${{color:'#fff'}}/></div>
+        <div class="tl-card">
+          <div class="row between center">
+            <div class="row center" style=${{gap:11}}>
+              <div class="qa-ic" style=${{width:40,height:40,background:soft[r.color],color:C[r.color]}}><${Icon} name=${r.icon} size=20/></div>
+              <div><div style=${{fontWeight:700,fontSize:14.5}}>${r.title}</div>
+                <div class="sub" style=${{fontSize:12.5}}>${r.by}</div></div>
+            </div>
+            <div style=${{textAlign:'right'}}><${Tag} kind=${r.color==='amber'?'amber':r.color==='coral'?'coral':r.color==='blue'?'blue':r.color==='violet'?'violet':r.color==='green'?'green':'teal'}>${r.tag}</${Tag}>
+              <div class="sub" style=${{fontSize:11.5,marginTop:5}}>${r.date}</div></div>
+          </div>
+        </div>
+      </div>`)}
+    </div>
+  </div>`;
+}
+/* ============================== AI HEALTH ASSISTANT ============================== */
+function AIAssistant(){
+  const s=useStore();
+  const [msgs,setMsgs]=useState([
+    {who:'them',t:"Hi, I'm Nirog AI 🩺 — your 24×7 health companion. Tell me how you're feeling and I'll help you understand what might be going on. I'm not a doctor, but I can guide you on next steps."},
+  ]);
+  const [txt,setTxt]=useState('');
+  const [typing,setTyping]=useState(false);
+  const [escalate,setEscalate]=useState(null);
+  const bodyRef=useRef();
+  useEffect(()=>{ if(bodyRef.current) bodyRef.current.scrollTop=bodyRef.current.scrollHeight; },[msgs,typing,escalate]);
+
+  /* All symptom screening happens server-side. The client renders whatever
+     the API returns and never composes health advice of its own. */
+  const reply = async (userText)=>{
+    setTyping(true);
+    try{
+      const res = await api('/ai/triage', {method:'POST', body:{message:userText}});
+      setTyping(false);
+      setMsgs(m=>[...m,{who:'them', t:res.message}]);
+      if(res.level==='CRISIS' || res.level==='EMERGENCY'){
+        setEscalate({urgent:true, level:res.level, actions:res.actions||[]});
+      } else if(res.actions && res.actions.length){
+        setEscalate({actions:res.actions});
+      }
+    }catch(err){
+      setTyping(false);
+      setMsgs(m=>[...m,{who:'them', t:"I couldn't reach the health service just now. If this feels urgent, please call 108 or see a doctor rather than waiting."}]);
+    }
+  };
+  const send=(preset)=>{ const v=(preset||txt).trim(); if(!v)return; setMsgs(m=>[...m,{who:'me',t:v}]); setTxt(''); setEscalate(null); reply(v); };
+  const chips=['I have a fever and body ache','Cough and sore throat','Acidity after meals','Feeling anxious lately','My child has a fever'];
+
+  return html`<div class="page-enter">
+    <div class="row between center" style=${{marginBottom:18,flexWrap:'wrap',gap:12}}>
+      <div>
+        <div class="row center" style=${{gap:11}}>
+          <div class="qa-ic" style=${{width:46,height:46,background:'linear-gradient(135deg,#f5a623,#ff8a3d)',color:'#fff',boxShadow:'0 8px 20px rgba(245,166,35,.3)'}}><${Icon} name="sparkle" size=24/></div>
+          <div><h2 class="h-lg" style=${{margin:0}}>Nirog AI Assistant</h2>
+          <div class="sub">Symptom guidance · available 24×7 · powered by AI</div></div>
+        </div>
+      </div>
+      <span class="tag tag-green"><${Icon} name="shieldcheck" size=13/> Private & secure</span>
+    </div>
+
+    <div class="grid" style=${{gridTemplateColumns:'1fr 300px',alignItems:'start'}}>
+      <div class="chat-wrap">
+        <div class="chat-head">
+          <div class="qa-ic" style=${{width:40,height:40,background:'linear-gradient(135deg,#f5a623,#ff8a3d)',color:'#fff'}}><${Icon} name="sparkle" size=20/></div>
+          <div style=${{flex:1}}><div style=${{fontWeight:700,fontSize:14.5}}>Nirog AI</div>
+            <div class="row center" style=${{gap:5}}><span class="doc-on" style=${{position:'static',width:8,height:8,border:'none'}}/>
+            <span class="sub" style=${{fontSize:12}}>Always online</span></div></div>
+        </div>
+        <div class="chat-body" ref=${bodyRef}>
+          ${msgs.map((m,i)=>html`<div key=${i} class=${'bubble '+(m.who==='me'?'me':'them')}>${m.t}</div>`)}
+          ${typing?html`<div class="bubble them typing"><span/><span/><span/></div>`:null}
+          ${escalate&&escalate.urgent?html`<div class="card" style=${{marginTop:10,padding:16,border:'1.5px solid var(--coral)',background:'var(--coral-soft)'}}>
+            <div class="row center" style=${{gap:9,marginBottom:9}}><${Icon} name="ambulance" size=20 style=${{color:'var(--coral-dark)'}}/>
+              <b style=${{color:'var(--coral-dark)'}}>This may need urgent care</b></div>
+            <button class="btn btn-coral btn-block" onClick=${()=>s.go('emergency')}><${Icon} name="ambulance" size=17/> Go to Emergency / SOS</button>
+          </div>`:escalate&&escalate.spec?html`<div class="card" style=${{marginTop:10,padding:16,border:'1.5px solid var(--teal-200)'}}>
+            <div class="sub" style=${{marginBottom:10}}>Want a professional opinion? Connect with a verified ${escalate.spec} now.</div>
+            <button class="btn btn-primary btn-block" onClick=${()=>s.go('doctors')}><${Icon} name="video" size=17/> Consult a ${escalate.spec}</button>
+          </div>`:null}
+        </div>
+        <div class="chat-input">
+          <input placeholder="Describe your symptoms…" value=${txt}
+            onInput=${e=>setTxt(e.target.value)} onKeyDown=${e=>e.key==='Enter'&&send()}/>
+          <button class="btn btn-primary" style=${{padding:'11px 16px'}} onClick=${()=>send()}><${Icon} name="send" size=18/></button>
+        </div>
+      </div>
+
+      <div>
+        <div class="card card-pad">
+          <div class="lbl" style=${{marginBottom:12}}>Common concerns</div>
+          <div style=${{display:'flex',flexDirection:'column',gap:9}}>
+            ${chips.map((c,i)=>html`<button key=${i} class="chip" style=${{justifyContent:'flex-start',textAlign:'left'}} onClick=${()=>send(c)}>${c}</button>`)}
+          </div>
+        </div>
+        <div class="card card-pad" style=${{marginTop:16,background:'var(--mint)'}}>
+          <div class="row center" style=${{gap:8,marginBottom:8}}><${Icon} name="info" size=18 style=${{color:'var(--teal-700)'}}/><b style=${{fontSize:13.5}}>Good to know</b></div>
+          <div class="sub" style=${{fontSize:12.5,lineHeight:1.6}}>Nirog AI offers general health information and guidance only. It does not diagnose or prescribe. For diagnosis and treatment, always consult a licensed doctor.</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== PREVENTIVE / PACKAGES ============================== */
+function Preventive(){
+  const s=useStore();
+  return html`<div class="page-enter">
+    <div style=${{marginBottom:6}}><h2 class="h-lg" style=${{margin:0}}>Preventive health packages</h2>
+      <div class="sub">Catch problems early · curated by doctors · free home sample collection</div></div>
+
+    <div class="card" style=${{marginTop:18,padding:0,overflow:'hidden',background:'linear-gradient(120deg,#0e7c6b,#13a08a)'}}>
+      <div style=${{padding:'26px 28px',color:'#fff'}}>
+        <div class="row center" style=${{gap:8,marginBottom:8}}><${Icon} name="award" size=20/><span style=${{fontWeight:700,letterSpacing:'.04em',fontSize:12.5,textTransform:'uppercase'}}>Most popular</span></div>
+        <div style=${{fontFamily:'var(--display)',fontWeight:800,fontSize:26,marginBottom:6}}>Comprehensive Full Body Checkup</div>
+        <div style=${{opacity:.92,fontSize:14,marginBottom:16,maxWidth:420}}>92 parameters covering heart, liver, kidney, thyroid, diabetes, vitamins & blood — a complete picture of your health.</div>
+        <div class="row center" style=${{gap:14,flexWrap:'wrap'}}>
+          <div style=${{fontFamily:'var(--display)',fontWeight:800,fontSize:30}}>${inr(1499)} <span style=${{fontSize:16,opacity:.7,textDecoration:'line-through',fontWeight:600}}>${inr(3200)}</span></div>
+          <span class="tag" style=${{background:'rgba(255,255,255,.22)',color:'#fff'}}>53% OFF</span>
+          <button class="btn" style=${{background:'#fff',color:'var(--teal-700)',fontWeight:700}} onClick=${()=>{ const t=LABS.concat(PACKAGES).find(x=>x.id==='FULLBODY'); t?s.bookLab(t):s.go('labs'); }}>Book now</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="med-grid" style=${{marginTop:20}}>
+      ${PACKAGES.map(p=>html`<div key=${p.id} class="card card-pad" style=${{display:'flex',flexDirection:'column',gap:12}}>
+        <div class="row between center">
+          <div class="qa-ic" style=${{width:46,height:46,background:soft[p.color],color:C[p.color]}}><${Icon} name="shield" size=23/></div>
+          <span class="tag tag-green">${pct(p.mrp,p.price)}% OFF</span>
+        </div>
+        <div><div style=${{fontWeight:700,fontSize:16}}>${p.name}</div>
+          <div class="sub" style=${{fontSize:13}}>${p.tests} tests · ${p.for}</div></div>
+        <div class="row center" style=${{gap:7,fontSize:12.5,color:'var(--muted)',flexWrap:'wrap'}}>
+          <span class="row center" style=${{gap:5}}><${Icon} name="truck" size=14/> Home collection</span>
+          <span class="row center" style=${{gap:5}}><${Icon} name="clock" size=14/> Report in 24 hrs</span>
+        </div>
+        <div class="divider"/>
+        <div class="row between center">
+          <div><span style=${{fontFamily:'var(--display)',fontWeight:800,fontSize:20}}>${inr(p.price)}</span>
+            <span class="was" style=${{marginLeft:6}}>${inr(p.mrp)}</span></div>
+          <button class="btn btn-primary btn-sm" onClick=${()=>s.bookLab(p)}>Book</button>
+        </div>
+      </div>`)}
+    </div>
+
+    <div class="card card-pad" style=${{marginTop:20,background:'var(--mint)'}}>
+      <div class="row center" style=${{gap:18,flexWrap:'wrap',justifyContent:'space-between'}}>
+        ${[['shieldcheck','NABL-certified labs'],['truck','Free home sample pickup'],['doc','Digital reports + doctor notes'],['trending','Track trends over time']].map((x,i)=>html`
+          <div key=${i} class="row center" style=${{gap:10}}><div class="qa-ic" style=${{width:40,height:40,background:'#fff',color:'var(--teal-700)'}}><${Icon} name=${x[0]} size=20/></div>
+            <span style=${{fontWeight:600,fontSize:13.5}}>${x[1]}</span></div>`)}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== EMERGENCY / SOS ============================== */
+function Emergency(){
+  const s=useStore();
+  const [booking,setBooking]=useState(false);
+  const [eta,setEta]=useState(7);
+  useEffect(()=>{ if(!booking)return; const id=setInterval(()=>setEta(e=>e>1?e-1:1),1500); return ()=>clearInterval(id); },[booking]);
+  const hospitals=[
+    {n:'CIMS Hospital',d:'2.1 km · Multi-speciality',t:'6 min',beds:'ICU available',color:'teal'},
+    {n:'Apollo Hospital',d:'3.8 km · 24×7 Emergency',t:'9 min',beds:'4 beds free',color:'blue'},
+    {n:'Sterling Hospital',d:'4.5 km · Trauma centre',t:'12 min',beds:'ICU available',color:'violet'},
+  ];
+  const contacts=[
+    {n:'Priya (Spouse)',p:'+91 98250 •••••',color:'rose'},
+    {n:'Dr. Ananya Sharma',p:'Family physician',color:'teal'},
+    {n:'Ambulance · 108',p:'National helpline',color:'coral'},
+  ];
+  return html`<div class="page-enter">
+    <div style=${{marginBottom:18}}><h2 class="h-lg" style=${{margin:0,color:'var(--coral-dark)'}}>Emergency & SOS</h2>
+      <div class="sub">One tap to summon help — we'll alert your contacts and the nearest hospital</div></div>
+
+    <div class="card" style=${{padding:'30px 24px',display:'flex',flexDirection:'column',alignItems:'center',textAlign:'center',border:'1.5px solid var(--coral-soft)'}}>
+      <button class="sos-btn" onClick=${()=>{ setBooking(true); s.toast('🚑 Ambulance dispatched · help is on the way'); }}>
+        <${Icon} name="ambulance" size=40 style=${{color:'#fff'}}/>
+        SOS
+        <span style=${{fontSize:12,fontWeight:600,opacity:.92}}>Tap for help</span>
+      </button>
+      ${booking?html`<div class="card card-pad" style=${{marginTop:24,width:'100%',maxWidth:420,background:'var(--mint)'}}>
+        <div class="row between center" style=${{marginBottom:10}}><b>Ambulance on the way</b><span class="tag tag-coral">Live</span></div>
+        <div class="pbar" style=${{marginBottom:10}}><span style=${{width:'62%'}}/></div>
+        <div class="row between center"><span class="sub">Arriving in <b style=${{color:'var(--coral-dark)'}}>${eta} min</b></span>
+          <span class="sub">GJ-01-AB-1408 · Toyota</span></div>
+      </div>`:html`<div class="sub" style=${{marginTop:18,maxWidth:380}}>Pressing SOS shares your live location with your emergency contacts and books the nearest available ambulance.</div>`}
+    </div>
+
+    <div class="grid" style=${{gridTemplateColumns:'1fr 1fr',marginTop:20,alignItems:'start'}}>
+      <div>
+        <${SectionHead} title="Nearest hospitals" sub="Live bed availability"/>
+        <div style=${{display:'flex',flexDirection:'column',gap:12}}>
+          ${hospitals.map((h,i)=>html`<div key=${i} class="card card-pad row between center">
+            <div class="row center" style=${{gap:12}}>
+              <div class="qa-ic" style=${{width:44,height:44,background:soft[h.color],color:C[h.color]}}><${Icon} name="hospital" size=22/></div>
+              <div><div style=${{fontWeight:700,fontSize:14.5}}>${h.n}</div>
+                <div class="sub" style=${{fontSize:12.5}}>${h.d}</div>
+                <span class="tag tag-green" style=${{marginTop:5}}>${h.beds}</span></div>
+            </div>
+            <div style=${{textAlign:'right'}}><div style=${{fontWeight:700,color:'var(--teal-700)'}}>${h.t}</div>
+              <button class="btn btn-ghost btn-sm" style=${{marginTop:6}} onClick=${()=>s.toast('Calling '+h.n+'…')}><${Icon} name="phone" size=14/> Call</button></div>
+          </div>`)}
+        </div>
+      </div>
+      <div>
+        <${SectionHead} title="Emergency contacts" sub="Alerted instantly on SOS"/>
+        <div style=${{display:'flex',flexDirection:'column',gap:12}}>
+          ${contacts.map((c,i)=>html`<div key=${i} class="card card-pad row between center">
+            <div class="row center" style=${{gap:12}}>
+              <${Avatar} name=${c.n} color=${c.color} size=44/>
+              <div><div style=${{fontWeight:700,fontSize:14.5}}>${c.n}</div>
+                <div class="sub" style=${{fontSize:12.5}}>${c.p}</div></div>
+            </div>
+            <button class="icon-btn" style=${{width:42,height:42}} onClick=${()=>s.toast('Calling '+c.n+'…')}><${Icon} name="phone" size=18/></button>
+          </div>`)}
+          <button class="btn btn-outline btn-block" onClick=${()=>s.toast('Add an emergency contact')}><${Icon} name="plus" size=17/> Add contact</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== INSURANCE ============================== */
+function Insurance(){
+  const s=useStore();
+  const plans=[
+    {n:'Nirog Care Basic',cover:'₹5 Lakh',prem:'₹612/mo',color:'teal',feats:['Cashless at 8,000+ hospitals','No room-rent cap','Day-care procedures','30-min claim approval'],pop:false},
+    {n:'Nirog Care Plus',cover:'₹10 Lakh',prem:'₹948/mo',color:'coral',feats:['Everything in Basic','Restore benefit 100%','Maternity + newborn cover','Free annual health checkup','Worldwide emergency'],pop:true},
+    {n:'Nirog Family Floater',cover:'₹25 Lakh',prem:'₹1,640/mo',color:'violet',feats:['Covers up to 6 members','Unlimited restore','OPD + dental + vision','No-claim bonus 50%','Personal health coach'],pop:false},
+  ];
+  return html`<div class="page-enter">
+    <div style=${{marginBottom:6}}><h2 class="h-lg" style=${{margin:0}}>Health insurance</h2>
+      <div class="sub">Cashless cover · paperless claims · settled in minutes, not months</div></div>
+
+    <div class="grid" style=${{gridTemplateColumns:'repeat(3,1fr)',marginTop:14,marginBottom:8}}>
+      ${[['shieldcheck','98.6%','Claim settlement'],['hospital','8,000+','Network hospitals'],['zap','30 min','Avg. approval']].map((x,i)=>html`
+        <div key=${i} class="stat-tile"><div class="stat-ic" style=${{background:soft.teal,color:C.teal}}><${Icon} name=${x[0]} size=21/></div>
+          <div class="stat-n">${x[1]}</div><div class="stat-l">${x[2]}</div></div>`)}
+    </div>
+
+    <div class="med-grid" style=${{marginTop:14}}>
+      ${plans.map(p=>html`<div key=${p.n} class="card card-pad" style=${{display:'flex',flexDirection:'column',gap:13,position:'relative',border:p.pop?'2px solid var(--coral)':'1px solid var(--line)'}}>
+        ${p.pop?html`<span class="tag tag-coral" style=${{position:'absolute',top:-11,left:20}}>★ Recommended</span>`:null}
+        <div class="qa-ic" style=${{width:48,height:48,background:soft[p.color],color:C[p.color]}}><${Icon} name="shield" size=24/></div>
+        <div><div style=${{fontWeight:700,fontSize:17}}>${p.n}</div>
+          <div class="sub" style=${{fontSize:13}}>Cover up to <b style=${{color:C[p.color]}}>${p.cover}</b></div></div>
+        <div style=${{fontFamily:'var(--display)',fontWeight:800,fontSize:24}}>${p.prem}<span class="sub" style=${{fontSize:13,fontWeight:500}}> /month</span></div>
+        <div class="divider"/>
+        <div style=${{display:'flex',flexDirection:'column',gap:9}}>
+          ${p.feats.map((f,i)=>html`<div key=${i} class="row center" style=${{gap:9,fontSize:13.5}}>
+            <${Icon} name="check" size=16 style=${{color:'var(--green)',flexShrink:0}}/> ${f}</div>`)}
+        </div>
+        <button class=${'btn btn-block '+(p.pop?'btn-coral':'btn-primary')} style=${{marginTop:6}} onClick=${()=>s.toast('Buying '+p.n+' — a Nirog advisor will call you')}>Get this plan</button>
+      </div>`)}
+    </div>
+
+    <div class="card card-pad" style=${{marginTop:20}}>
+      <${SectionHead} title="Your active policy" sub="Nirog Care Plus · valid till 31 Mar 2027"/>
+      <div class="row between center" style=${{flexWrap:'wrap',gap:14}}>
+        <div class="row center" style=${{gap:14}}>
+          <div class="qa-ic" style=${{width:50,height:50,background:soft.coral,color:C.coral}}><${Icon} name="shieldcheck" size=26/></div>
+          <div><div style=${{fontWeight:700}}>Policy #NRG-HLT-44821</div>
+            <div class="sub" style=${{fontSize:13}}>₹10,00,000 cover · ₹10,00,000 available</div></div>
+        </div>
+        <div class="row center" style=${{gap:10}}>
+          <button class="btn btn-outline btn-sm" onClick=${()=>s.toast('Opening e-card')}><${Icon} name="doc" size=15/> e-Card</button>
+          <button class="btn btn-primary btn-sm" onClick=${()=>s.toast('Start a cashless claim')}><${Icon} name="zap" size=15/> File claim</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== PROFILE / FAMILY ============================== */
+function Profile(){
+  const s=useStore();
+  const me=FAMILY.find(f=>f.id===s.activeFam)||FAMILY[0]||{name:s.user?.name||'You',rel:'Self',color:'teal',is_self:true};
+  const rows=[
+    {ic:'truck',t:'My orders',d:'Track, view and cancel orders',color:'teal',go:()=>s.go('orders')},
+    {ic:'logout',t:'Log out',d:s.user?.mobile||'',color:'coral',go:()=>s.signOut()},
+    {ic:'doc',t:'Health records',d:'12 documents · auto-organised',color:'blue',go:()=>s.go('records')},
+    {ic:'pill',t:'My medicines & refills',d:'3 active · 1 refill due',color:'teal',go:()=>s.go('pharmacy')},
+    {ic:'shield',t:'Insurance & policies',d:'Nirog Care Plus active',color:'coral',go:()=>s.go('insurance')},
+    {ic:'calendar',t:'Appointments',d:'2 upcoming consults',color:'violet',go:()=>s.toast('Opening appointments')},
+    {ic:'wallet',t:'Payments & wallet',d:'₹240 Nirog cash · 2 cards',color:'green',go:()=>s.toast('Opening wallet')},
+    {ic:'settings',t:'Settings & privacy',d:'ABHA linked · 2FA on',color:'amber',go:()=>s.toast('Opening settings')},
+  ];
+  return html`<div class="page-enter">
+    <div class="card" style=${{padding:0,overflow:'hidden'}}>
+      <div style=${{height:96,background:'linear-gradient(120deg,#0e7c6b,#13a08a)'}}/>
+      <div style=${{padding:'0 24px 22px',marginTop:-40}}>
+        <div class="row between" style=${{alignItems:'flex-end',flexWrap:'wrap',gap:14}}>
+          <div class="row" style=${{alignItems:'flex-end',gap:16}}>
+            <${Avatar} name=${me.is_self?s.user?.name:me.name} color=${me.color} size=84 radius=26/>
+            <div style=${{paddingBottom:4}}>
+              <div style=${{fontFamily:'var(--display)',fontWeight:800,fontSize:22}}>${me.is_self?s.user?.name:me.name}</div>
+              <div class="sub">${me.rel} · ${me.age} yrs · Ahmedabad</div>
+              <div class="row center" style=${{gap:7,marginTop:7}}><span class="tag tag-green"><${Icon} name="shieldcheck" size=13/> ABHA verified</span>
+                <span class="tag tag-teal">Health score ${me.score}</span></div>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" onClick=${()=>s.toast('Edit profile')}><${Icon} name="settings" size=15/> Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div style=${{marginTop:22}}><${SectionHead} title="Family members" sub="Manage everyone's health from one account" action="Add member" onAction=${()=>s.toast('Add a family member')}/></div>
+    <div class="grid" style=${{gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))'}}>
+      ${FAMILY.map(f=>html`<div key=${f.id} class=${'card card-pad'} style=${{cursor:'pointer',border:f.id===s.activeFam?'2px solid var(--teal-500)':'1px solid var(--line)'}} onClick=${()=>{s.setActiveFam(f.id);s.toast('Switched to '+(f.name==='You'?'your':f.name+"'s")+' profile');}}>
+        <div class="row between center" style=${{marginBottom:10}}>
+          <${Avatar} name=${f.name==='You'?'Me':f.name} color=${f.color} size=48 radius=15/>
+          ${f.id===s.activeFam?html`<span class="tag tag-teal">Active</span>`:null}
+        </div>
+        <div style=${{fontWeight:700}}>${f.name==='You'?'You (Self)':f.name}</div>
+        <div class="sub" style=${{fontSize:12.5}}>${f.rel} · ${f.age} yrs</div>
+        <div class="pbar" style=${{marginTop:11}}><span style=${{width:f.score+'%',background:C[f.color]}}/></div>
+        <div class="sub" style=${{fontSize:11.5,marginTop:6}}>Health score ${f.score}/100</div>
+      </div>`)}
+    </div>
+
+    <div style=${{marginTop:8}}>
+      ${rows.map((r,i)=>html`<div key=${i} class="card card-pad row between center" style=${{marginTop:12,cursor:'pointer'}} onClick=${r.go}>
+        <div class="row center" style=${{gap:13}}>
+          <div class="qa-ic" style=${{width:44,height:44,background:soft[r.color],color:C[r.color]}}><${Icon} name=${r.ic} size=22/></div>
+          <div><div style=${{fontWeight:700,fontSize:14.5}}>${r.t}</div><div class="sub" style=${{fontSize:12.5}}>${r.d}</div></div>
+        </div>
+        <${Icon} name="chevR" size=20 style=${{color:'var(--faint)'}}/>
+      </div>`)}
+    </div>
+    <button class="btn btn-outline btn-block" style=${{marginTop:16,color:'var(--coral)',borderColor:'var(--coral-soft)'}} onClick=${()=>s.toast('Logged out (demo)')}><${Icon} name="logout" size=17/> Log out</button>
+  </div>`;
+}
+
+/* ============================== GENERIC MODULE PAGE ============================== */
+const MODULES={
+  homecare:{icon:'truck',color:'teal',title:'Home Healthcare',sub:'Nurses, physiotherapy & attendants at your doorstep',
+    items:[['Nursing care at home','Trained nurses for injections, wound care & monitoring','user'],['Physiotherapy sessions','Post-surgery & mobility recovery, at home','activity'],['Elder care attendants','Day & night trained caregivers','users'],['Medical equipment rental','Oxygen, beds, wheelchairs delivered','briefcase']]},
+  chronic:{icon:'pulse',color:'rose',title:'Chronic Disease Care',sub:'Structured programs for diabetes, BP, heart & thyroid',
+    items:[['Diabetes care program','HbA1c tracking, diet, meds & coaching','glucose'],['Hypertension management','BP logs, medication & lifestyle plan','heartpulse'],['Thyroid care','Periodic tests & dosage fine-tuning','activity'],['Dedicated health coach','Monthly check-ins that keep you on track','user']]},
+  maternity:{icon:'baby',color:'amber',title:'Maternity & Child Care',sub:'From the first trimester to your child\'s milestones',
+    items:[['Pregnancy care plans','Trimester-wise checkups & scans','heartpulse'],['Vaccination tracker','Never miss a child immunisation','shield'],['Pediatric consults','24×7 access to child specialists','baby'],['Growth & nutrition','Track milestones, weight & diet','trending']]},
+  mental:{icon:'brain',color:'green',title:'Mental Wellness',sub:'Confidential support — therapy, mood tracking & calm',
+    items:[['Talk to a therapist','Private video & chat counselling','chat'],['Mood & journal tracking','Understand your patterns over time','activity'],['Guided meditation','Sleep, anxiety & focus sessions','sparkle'],['Crisis support','Priority access when you need it most','shield']]},
+  fitness:{icon:'dumbbell',color:'blue',title:'Fitness & Nutrition',sub:'Personalised plans that actually fit Indian routines',
+    items:[['Custom diet plans','Food-first plans by certified dietitians','flame'],['Workout programs','Home & gym routines for your goal','dumbbell'],['Calorie & step tracking','Sync with your wearables','trending'],['Nutritionist consults','One-on-one guidance, no fads','user']]},
+  senior:{icon:'shield',color:'violet',title:'Senior Care',sub:'Dignified, attentive care for your parents',
+    items:[['Health monitoring','Vitals tracked, family kept informed','pulse'],['Regular home visits','Doctors & nurses who come to them','home'],['Medicine management','Refills & reminders handled for you','pill'],['Emergency response','One-tap SOS with priority dispatch','ambulance']]},
+};
+function ModulePage({mod}){
+  const s=useStore();
+  const m=MODULES[mod]||MODULES.homecare;
+  return html`<div class="page-enter">
+    <div class="card" style=${{padding:'28px',background:'linear-gradient(120deg,'+'var(--mint),#fff)',display:'flex',alignItems:'center',gap:18,flexWrap:'wrap'}}>
+      <div class="qa-ic" style=${{width:60,height:60,background:soft[m.color],color:C[m.color]}}><${Icon} name=${m.icon} size=30/></div>
+      <div><h2 class="h-lg" style=${{margin:0}}>${m.title}</h2><div class="sub">${m.sub}</div></div>
+    </div>
+    <div class="med-grid" style=${{marginTop:20}}>
+      ${m.items.map((it,i)=>html`<div key=${i} class="card card-pad" style=${{display:'flex',flexDirection:'column',gap:11}}>
+        <div class="qa-ic" style=${{width:46,height:46,background:soft[m.color],color:C[m.color]}}><${Icon} name=${it[2]} size=23/></div>
+        <div style=${{fontWeight:700,fontSize:15.5}}>${it[0]}</div>
+        <div class="sub" style=${{fontSize:13,lineHeight:1.55}}>${it[1]}</div>
+        <button class="btn btn-ghost btn-sm" style=${{marginTop:'auto',alignSelf:'flex-start'}} onClick=${()=>s.toast(it[0]+' — booking opens shortly')}>Explore <${Icon} name="arrowR" size=15/></button>
+      </div>`)}
+    </div>
+    <div class="card card-pad" style=${{marginTop:20,textAlign:'center'}}>
+      <div style=${{fontWeight:700,fontSize:15,marginBottom:5}}>Need help choosing?</div>
+      <div class="sub" style=${{marginBottom:14}}>Talk to a Nirog care coordinator who'll build the right plan for your family.</div>
+      <button class="btn btn-primary" onClick=${()=>s.go('doctors')}><${Icon} name="phone" size=16/> Talk to a coordinator</button>
+    </div>
+  </div>`;
+}
+
+
+/* ============================== SIDEBAR ============================== */
+const NAV=[
+  {group:'Care', items:[
+    {r:'home',icon:'home',t:'Home'},
+    {r:'pharmacy',icon:'pill',t:'Pharmacy'},
+    {r:'rxscan',icon:'upload',t:'Upload prescription'},
+    {r:'orders',icon:'truck',t:'My orders'},
+    {r:'doctors',icon:'stethoscope',t:'Consult a doctor'},
+    {r:'labs',icon:'flask',t:'Lab tests'},
+    {r:'ai',icon:'sparkle',t:'Nirog AI',badge:'24×7'},
+  ]},
+  {group:'Health', items:[
+    {r:'records',icon:'folder',t:'Health records'},
+    {r:'preventive',icon:'shield',t:'Health packages'},
+    {r:'chronic',icon:'pulse',t:'Chronic care'},
+    {r:'mental',icon:'brain',t:'Mental wellness'},
+    {r:'fitness',icon:'dumbbell',t:'Fitness & diet'},
+  ]},
+  {group:'More', items:[
+    {r:'homecare',icon:'truck',t:'Home healthcare'},
+    {r:'maternity',icon:'baby',t:'Mother & child'},
+    {r:'senior',icon:'users',t:'Senior care'},
+    {r:'insurance',icon:'shield2',t:'Insurance'},
+    {r:'profile',icon:'user',t:'My profile'},
+  ]},
+];
+function Sidebar(){
+  const s=useStore();
+  return html`<aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo"><${Icon} name="heartpulse" size=24 style=${{color:'#fff'}}/></div>
+      <div><div class="sb-name">Niro<b>g</b></div><div class="sb-tag">Your family's health, one tap away</div></div>
+    </div>
+    <div class="sb-scroll">
+      ${NAV.map((g,gi)=>html`<div key=${gi}>
+        <div class="sb-group-label">${g.group}</div>
+        ${g.items.map(it=>html`<div key=${it.r} class=${'nav-item'+(s.route===it.r?' active':'')} onClick=${()=>s.go(it.r)}>
+          <span class="ni-ic" style=${{display:'grid'}}><${Icon} name=${it.icon} size=20/></span>
+          <span style=${{flex:1}}>${it.t}</span>
+          ${it.badge?html`<span class="ni-badge tag tag-green" style=${{fontSize:10}}>${it.badge}</span>`:null}
+        </div>`)}
+      </div>`)}
+    </div>
+    <div class="sb-foot">
+      <button class="sb-emerg" onClick=${()=>s.go('emergency')}><${Icon} name="ambulance" size=20/> Emergency · SOS</button>
+    </div>
+  </aside>`;
+}
+
+/* ============================== TOPBAR ============================== */
+function Topbar(){
+  const s=useStore();
+  const cartCount=Object.values(s.cart).reduce((a,b)=>a+b,0);
+  return html`<header class="topbar">
+    <div class="tb-mobtitle"><div class="sb-logo"><${Icon} name="heartpulse" size=20 style=${{color:'#fff'}}/></div>
+      <div class="nm">Niro<b>g</b></div></div>
+    <div class="searchbar">
+      <${Icon} name="search" size=19 style=${{color:'var(--faint)'}}/>
+      <input placeholder="Search medicines, doctors, lab tests…" value=${s.query}
+        onInput=${e=>{s.setQuery(e.target.value); if(e.target.value && s.route!=='pharmacy') s.go('pharmacy');}}/>
+    </div>
+    <div class="tb-spacer"/>
+    <button class="icon-btn" onClick=${()=>s.toast('No new notifications')}><${Icon} name="bell" size=20/></button>
+    <button class="icon-btn" onClick=${()=>s.setCartOpen(true)}><${Icon} name="cart" size=20/>${cartCount?html`<span class="cnt">${cartCount}</span>`:null}</button>
+    ${s.user?html`<button class="tb-avatar" title=${s.user.name} onClick=${()=>s.go('profile')}>${(s.user.first_name||'U')[0].toUpperCase()}</button>`
+      :html`<button class="btn btn-primary btn-sm" onClick=${()=>s.requireLogin()}>Log in</button>`}
+  </header>`;
+}
+
+/* ============================== BOTTOM NAV (mobile) ============================== */
+function BottomNav(){
+  const s=useStore();
+  const items=[['home','home','Home'],['pharmacy','pill','Pharmacy'],['ai','sparkle','Nirog AI'],['records','folder','Records'],['profile','user','Profile']];
+  return html`<nav class="botnav">
+    ${items.map(it=>html`<button key=${it[0]} class=${'bn-item'+(s.route===it[0]?' active':'')} onClick=${()=>s.go(it[0])}>
+      <span class="bn-ic"><${Icon} name=${it[1]} size=22/></span>${it[2]}</button>`)}
+  </nav>`;
+}
+
+/* ============================== CART DRAWER ============================== */
+function CartDrawer(){
+  const s=useStore();
+  const c=s.serverCart;
+  const items=c?.items||[];
+  const count=items.reduce((a,i)=>a+i.qty,0);
+  const find=i=>MEDS.find(x=>x.id===i.id)||decorate(i);
+  return html`<div>
+    <div class="scrim" onClick=${()=>s.setCartOpen(false)}/>
+    <div class="drawer">
+      <div class="drawer-head">
+        <div class="row center" style=${{gap:10}}><${Icon} name="cart" size=20 style=${{color:'var(--teal-700)'}}/><b style=${{fontSize:16}}>Your cart</b>
+          ${count?html`<span class="tag tag-teal">${count} items</span>`:null}</div>
+        <button class="icon-btn" style=${{width:38,height:38}} onClick=${()=>s.setCartOpen(false)}><${Icon} name="x" size=18/></button>
+      </div>
+      <div class="drawer-body">
+        ${!s.user?html`<div class="empty">
+          <div style=${{fontWeight:700,fontSize:16}}>Log in to see your cart</div>
+          <button class="btn btn-primary" style=${{marginTop:14}} onClick=${()=>s.requireLogin('Log in to see your cart.')}>Log in</button></div>`
+        :items.length===0?html`<div class="empty">
+          <div class="empty-ic"><${Icon} name="cart" size=34 style=${{color:'var(--teal-400)'}}/></div>
+          <div style=${{fontWeight:700,fontSize:16,marginTop:4}}>Your cart is empty</div>
+          <div class="sub" style=${{marginBottom:16}}>Add medicines and save with generics</div>
+          <button class="btn btn-primary" onClick=${()=>{s.setCartOpen(false);s.go('pharmacy');}}>Browse pharmacy</button>
+        </div>`:html`<div>
+          ${items.map(i=>html`<div key=${i.id} class="cart-item">
+            <div class="cart-thumb"><${Icon} name=${i.form==='Syrup'?'drop':'pill'} size=24/></div>
+            <div style=${{flex:1,minWidth:0}}>
+              <div style=${{fontWeight:700,fontSize:14}}>${i.name} ${i.policy.requires_prescription?html`<${Tag} kind="coral">Rx</${Tag}>`:null}</div>
+              <div class="sub" style=${{fontSize:12}}>${i.pack}</div>
+              ${!i.policy.allowed?html`<div class="sub" style=${{fontSize:12,color:'var(--coral-dark)'}}>${i.policy.message}</div>`:null}
+              <div class="row between center" style=${{marginTop:8}}>
+                <div><b>${inr(i.line_total)}</b> ${i.mrp>i.price?html`<span class="was" style=${{fontSize:12}}>${inr(i.mrp*i.qty)}</span>`:null}</div>
+                <div class="stepper">
+                  <button onClick=${()=>s.setQty(find(i),i.qty-1)}><${Icon} name="minus" size=15/></button>
+                  <span>${i.qty}</span>
+                  <button onClick=${()=>s.setQty(find(i),i.qty+1)}><${Icon} name="plus" size=15/></button>
+                </div>
+              </div>
+            </div>
+          </div>`)}
+          ${c.you_save>0?html`<div class="card card-pad" style=${{background:'var(--green-soft)',marginTop:4}}>
+            <div class="row center" style=${{gap:9}}><${Icon} name="percent" size=18 style=${{color:'var(--green)'}}/>
+              <span style=${{fontWeight:700,color:'var(--green-dark,#0a7d54)',fontSize:13.5}}>You're saving ${inr(c.you_save)} on this order</span></div>
+          </div>`:null}
+          ${c.requires_prescription?html`<div class="card card-pad" style=${{background:'var(--amber-soft)',marginTop:10,fontSize:13}}>
+            Prescription (Rx) medicines need a valid prescription, checked by our pharmacist before dispatch.</div>`:null}
+          <div style=${{marginTop:18}}>
+            <div class="row between" style=${{fontSize:13.5,marginBottom:8}}><span class="sub">Item total (MRP)</span><span>${inr(c.mrp_total)}</span></div>
+            <div class="row between" style=${{fontSize:13.5,marginBottom:8}}><span class="sub">Discount</span><span style=${{color:'var(--green)'}}>− ${inr(c.you_save)}</span></div>
+            <div class="row between" style=${{fontSize:13.5,marginBottom:8}}><span class="sub">Delivery</span><span>${c.delivery===0?'FREE':inr(c.delivery)}</span></div>
+          </div>
+        </div>`}
+      </div>
+      ${s.user&&items.length?html`<div class="drawer-foot">
+        <div class="row between center" style=${{marginBottom:12}}><span style=${{fontWeight:700,fontSize:16}}>To pay</span>
+          <span style=${{fontFamily:'var(--display)',fontWeight:800,fontSize:22}}>${inr(c.total)}</span></div>
+        <button class="btn btn-coral btn-block" disabled=${!c.checkout_allowed} onClick=${()=>s.checkout()}>
+          <${Icon} name="shieldcheck" size=18/> Proceed to checkout</button>
+      </div>`:null}
+    </div>
+  </div>`;
+}
+
+/* ============================== LAB BOOKING MODAL ============================== */
+function LabModal({item,close}){
+  const s=useStore();
+  const [slots,setSlots]=useState(null);
+  const [slot,setSlot]=useState(null);
+  const [addresses,setAddresses]=useState(null);
+  const [addr,setAddr]=useState(null);
+  const [adding,setAdding]=useState(false);
+  const [member,setMember]=useState((FAMILY.find(f=>f.is_self)||FAMILY[0]||{}).id);
+  const [busy,setBusy]=useState(false);
+  const [error,setError]=useState(null);
+  const [done,setDone]=useState(null);
+
+  useEffect(()=>{
+    if(!s.user) return;
+    api('/lab-slots').then(r=>{ setSlots(r.items); setSlot((r.items.find(x=>x.available)||{}).slot); }).catch(e=>setError(e.message));
+    api('/addresses').then(r=>{ setAddresses(r.items); setAddr((r.items.find(a=>a.is_default)||r.items[0]||{}).id);
+      if(!r.items.length) setAdding(true); }).catch(()=>setAddresses([]));
+  },[]);
+
+  const book=async()=>{
+    setBusy(true); setError(null);
+    try{ setDone(await api('/lab-bookings',{method:'POST',body:{test_id:item.id,address_id:addr,member_id:member,slot}})); }
+    catch(e){ setError(e.message); if(e.code==='slot_full'||e.code==='slot_unavailable') api('/lab-slots').then(r=>setSlots(r.items)); }
+    finally{ setBusy(false); }
+  };
+
+  const days={};
+  (slots||[]).forEach(x=>{ const d=x.label.split(',')[0]; (days[d]=days[d]||[]).push(x); });
+
+  return html`<div class="modal">
+    <div class="scrim" onClick=${close}/>
+    <div class="modal-card" style=${{position:'relative',zIndex:1,maxHeight:'90vh',overflow:'auto'}}>
+      <div class="drawer-head">
+        <div class="row center" style=${{gap:10}}><div class="qa-ic" style=${{width:38,height:38,background:soft.violet,color:C.violet}}><${Icon} name="flask" size=19/></div>
+          <b>Book home collection</b></div>
+        <button class="icon-btn" style=${{width:36,height:36}} onClick=${close}><${Icon} name="x" size=17/></button>
+      </div>
+      <div style=${{padding:'20px 22px'}}>
+        <div class="card card-pad" style=${{background:'var(--mint)',marginBottom:18}}>
+          <div style=${{fontWeight:700}}>${item.name}</div>
+          <div class="row between center" style=${{marginTop:6}}>
+            <span class="sub">${item.price?inr(item.price):'Price on confirmation'} · pay at collection</span>
+            ${item.fasting?html`<span class="tag tag-amber">Fasting needed</span>`:null}</div>
+        </div>
+        ${!s.user?html`<div style=${{textAlign:'center'}}>
+            <p class="sub">Log in to book a home sample collection.</p>
+            <button class="btn btn-primary" style=${{marginTop:12}} onClick=${()=>{close();s.requireLogin('Log in to book a lab test.');}}>Log in</button></div>`
+        :done?html`<div style=${{textAlign:'center',padding:'10px 0'}}>
+          <div class="empty-ic" style=${{background:'var(--green-soft)',margin:'0 auto'}}><${Icon} name="check" size=34 style=${{color:'var(--green)'}}/></div>
+          <div style=${{fontWeight:800,fontSize:18,marginTop:14,fontFamily:'var(--display)'}}>Booking received</div>
+          <div class="sub" style=${{marginTop:6}}>${done.test.name} for ${done.patient}<br/>${done.slot_label} · Ref ${done.reference}</div>
+          <p class="sub" style=${{marginTop:10,fontSize:13}}>The lab will confirm your slot. ${item.fasting?'Please fast for 10–12 hours before collection. ':''}Pay at collection.</p>
+          <button class="btn btn-primary btn-block" style=${{marginTop:18}} onClick=${()=>{close();s.openBookings();}}>View my lab tests</button>
+        </div>`
+        :html`<div>
+          ${FAMILY.length>1?html`<div class="lbl" style=${{marginBottom:8}}>Who is the test for?</div>
+            <div class="row wrap" style=${{gap:8,marginBottom:16}}>
+              ${FAMILY.map(f=>html`<button key=${f.id} class=${'chip'+(member===f.id?' on':'')} onClick=${()=>setMember(f.id)}>${f.is_self?'Myself':f.name}</button>`)}</div>`:null}
+          <div class="lbl" style=${{marginBottom:8}}>Collection slot</div>
+          ${slots===null?html`<div class="sub">Loading slots…</div>`:null}
+          ${Object.entries(days).map(([day,list])=>html`<div key=${day} style=${{marginBottom:10}}>
+            <div class="sub" style=${{fontSize:12.5,fontWeight:700,marginBottom:6}}>${day}</div>
+            <div class="row wrap" style=${{gap:8}}>
+              ${list.map(x=>html`<button key=${x.slot} class=${'slot'+(slot===x.slot?' on':'')} disabled=${!x.available}
+                style=${{opacity:x.available?1:.45}} onClick=${()=>setSlot(x.slot)}>${x.label.split(', ')[1]}${x.available?'':' · full'}</button>`)}
+            </div></div>`)}
+          <div class="lbl" style=${{margin:'14px 0 6px'}}>Collection address</div>
+          ${(addresses||[]).map(a=>html`<label key=${a.id} class=${'card card-pad addr'+(addr===a.id?' on':'')} style=${{marginTop:8}}>
+            <input type="radio" name="labaddr" checked=${addr===a.id} onChange=${()=>setAddr(a.id)}/>
+            <div class="sub" style=${{fontSize:13.5}}>${a.text}</div></label>`)}
+          ${adding?html`<${AddressForm} onCancel=${addresses&&addresses.length?()=>setAdding(false):null}
+              onSaved=${a=>{setAddresses([a,...(addresses||[])]);setAddr(a.id);setAdding(false);}}/>`
+            :html`<button class="btn btn-ghost btn-sm" style=${{marginTop:8}} onClick=${()=>setAdding(true)}><${Icon} name="plus" size=14/> Add address</button>`}
+          ${error?html`<div class="card card-pad" style=${{marginTop:12,background:'var(--coral-soft)',fontSize:13.5}}>${error}</div>`:null}
+          <button class="btn btn-primary btn-block" style=${{marginTop:18}} disabled=${busy||!slot||!addr} onClick=${book}>
+            ${busy?'Booking…':'Book collection'}</button>
+        </div>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== TOASTS ============================== */
+function Toasts({list}){
+  return html`<div class="toast-wrap">
+    ${list.map(t=>html`<div key=${t.id} class="toast"><${Icon} name="check" size=16 style=${{color:'var(--teal-300)'}}/> ${t.msg}</div>`)}
+  </div>`;
+}
+
+/* ============================== APP ROOT ============================== */
+function App(){
+  const [booted,setBooted]=useState(false);
+  const [bootError,setBootError]=useState(null);
+  useEffect(()=>{ boot().then(()=>{ setUser(USER); setServerCart(SERVER_CART); setBooted(true); })
+    .catch(e=>setBootError(e.message)); },[]);
+  useEffect(()=>{
+    const onLogout=()=>{ USER=null; setUser(null); setServerCart(null); };
+    window.addEventListener('nirog-logout', onLogout);
+    return ()=>window.removeEventListener('nirog-logout', onLogout);
+  },[]);
+  const [route,setRoute]=useState('home');
+  const [selMed,setSelMed]=useState(null);
+  const [selDoc,setSelDoc]=useState(null);
+  const [consult,setConsult]=useState(null);
+  const [serverCart,setServerCart]=useState(null);
+  const [user,setUser]=useState(null);
+  const [loginReason,setLoginReason]=useState(null);
+  const [afterLogin,setAfterLogin]=useState(null);
+  const [orderId,setOrderId]=useState(null);
+  const [ordersTab,setOrdersTab]=useState('medicines');
+  const [,setTick]=useState(0);   // re-render after the module-level stores change
+  const [activeFam,setActiveFam]=useState('f1');
+  const [query,setQuery]=useState('');
+  const [cartOpen,setCartOpen]=useState(false);
+  const [labItem,setLabItem]=useState(null);
+  const [toasts,setToasts]=useState([]);
+  /* Quantity per product id, derived from the server cart. */
+  const cart = {};
+  (serverCart?.items||[]).forEach(i=>{ cart[i.id]=i.qty; });
+  const mainRef=useRef();
+
+  const scrollTop=()=>{ if(mainRef.current) mainRef.current.scrollTo({top:0,behavior:'smooth'}); window.scrollTo({top:0,behavior:'smooth'}); };
+  const toast=(msg)=>{ const id=Date.now()+Math.random(); setToasts(t=>[...t,{id,msg}]); setTimeout(()=>setToasts(t=>t.filter(x=>x.id!==id)),2600); };
+
+  const requireLogin=(reason)=>{
+    setLoginReason(reason||null); setAfterLogin(route==='login'?'home':route);
+    setSelMed(null); setSelDoc(null); setConsult(null); setCartOpen(false);
+    setRoute('login'); scrollTop();
+  };
+  const setQty=async(m,q)=>{
+    if(!user){ requireLogin('Log in to add medicines to your cart.'); return; }
+    const wasNew=!cart[m.id];
+    try{
+      const c=await api('/cart/items/'+encodeURIComponent(m.id),{method:'PUT',body:{quantity:Math.max(0,q)}});
+      setServerCart(c);
+      if(q>0 && wasNew) toast(m.name+' added to cart');
+    }catch(err){ toast(err.message || 'Could not update your cart'); }
+  };
+
+  const store={
+    route, query, cart, activeFam, cartOpen,
+    go:(r)=>{ setSelMed(null); setSelDoc(null); setConsult(null); setOrderId(null); setRoute(r); if(r!=='pharmacy') setQuery(''); scrollTop(); },
+    setQuery,
+    openMed:(m)=>{ setSelMed(m); scrollTop(); },
+    openDoc:(d)=>{ setSelDoc(d); scrollTop(); },
+    startConsult:(d,mode)=>{ setConsult({d,mode}); setSelDoc(null); scrollTop(); },
+    bookLab:(item)=>{ setLabItem(item); },
+    setActiveFam:(id)=>setActiveFam(id),
+    setCartOpen,
+    /* Server-backed. Prescription and quantity rules are enforced by the
+       API, so a rejected change is surfaced rather than silently allowed. */
+    setQty: (m,q)=>setQty(m,q),
+    addToCart: (m,q=1)=>{ rememberMeds([decorate(m)]); return setQty(m,(cart[m.id]||0)+q); },
+    serverCart, user, loginReason, orderId,
+    requireLogin:(reason)=>requireLogin(reason),
+    signIn: async (token)=>{
+      setAuthToken(token);
+      await boot();
+      setUser(USER); setServerCart(SERVER_CART); setTick(t=>t+1);
+      toast('Welcome, '+(USER?.first_name||'back'));
+      const next=afterLogin||'home'; setAfterLogin(null); setLoginReason(null);
+      setRoute(next); scrollTop();
+    },
+    signOut: async ()=>{
+      setAuthToken(null); await boot();
+      setUser(null); setServerCart(null); setTick(t=>t+1); setRoute('home'); toast('Logged out');
+    },
+    refreshAccount: async ()=>{ await boot(); setServerCart(SERVER_CART); setTick(t=>t+1); },
+    openOrder:(id)=>{ setOrderId(id); setOrdersTab('medicines'); setRoute('orders'); scrollTop(); },
+    openBookings:()=>{ setOrderId(null); setOrdersTab('labs'); setRoute('orders'); scrollTop(); },
+    ordersTab,
+    checkout:()=>{ setCartOpen(false); setRoute('checkout'); scrollTop(); },
+    toast,
+  };
+
+  if(bootError) return html`<div style=${{padding:'60px 24px',maxWidth:560,margin:'0 auto',fontFamily:'var(--body)'}}>
+    <h1 class="h-lg">Can't reach the Nirog API</h1>
+    <p class="sub" style=${{marginTop:10,lineHeight:1.6}}>${bootError}</p>
+    <p class="sub" style=${{marginTop:14,lineHeight:1.6}}>Start the backend with <code>python run.py</code> in <code>backend/</code>, then reload. If it is running on another host, set <code>window.NIROG_API_BASE</code> before this script.</p>
+  </div>`;
+  if(!booted) return html`<div style=${{display:'grid',placeItems:'center',minHeight:'100vh',fontFamily:'var(--body)',color:'var(--muted)'}}>Loading Nirog…</div>`;
+
+  const NEEDS_LOGIN={checkout:'Log in to check out.', orders:'Log in to see your orders.',
+    profile:'Log in to see your profile.', records:'Log in to see your health records.'};
+  let screen;
+  if(!user && NEEDS_LOGIN[route] && !selMed && !selDoc && !consult)
+    screen=html`<${Login}/>`;
+  else if(consult) screen=html`<${Consult} d=${consult.d} mode=${consult.mode}/>`;
+  else if(selDoc) screen=html`<${DocProfile} d=${selDoc}/>`;
+  else if(selMed) screen=html`<${MedDetail} m=${selMed}/>`;
+  else switch(route){
+    case 'pharmacy': screen=html`<${Pharmacy}/>`; break;
+    case 'rxscan': screen=html`<${RxScan}/>`; break;
+    case 'login': screen=html`<${Login}/>`; break;
+    case 'checkout': screen=html`<${Checkout}/>`; break;
+    case 'orders': screen=html`<${Orders} key=${ordersTab+(orderId||'')}/>`; break;
+    case 'doctors': screen=html`<${Doctors}/>`; break;
+    case 'labs': screen=html`<${Labs}/>`; break;
+    case 'ai': screen=html`<${AIAssistant}/>`; break;
+    case 'records': screen=html`<${Records}/>`; break;
+    case 'preventive': screen=html`<${Preventive}/>`; break;
+    case 'emergency': screen=html`<${Emergency}/>`; break;
+    case 'insurance': screen=html`<${Insurance}/>`; break;
+    case 'profile': screen=html`<${Profile}/>`; break;
+    case 'homecare': case 'chronic': case 'maternity': case 'mental': case 'fitness': case 'senior':
+      screen=html`<${ModulePage} mod=${route}/>`; break;
+    default: screen=html`<${Home}/>`;
+  }
+
+  return html`<${Store.Provider} value=${store}>
+    <div class="app">
+      <${Sidebar}/>
+      <div class="main" ref=${mainRef}>
+        <${Topbar}/>
+        <div class="content">${screen}</div>
+      </div>
+      <${BottomNav}/>
+      ${cartOpen?html`<${CartDrawer}/>`:null}
+      ${labItem?html`<${LabModal} item=${labItem} close=${()=>setLabItem(null)}/>`:null}
+      <${Toasts} list=${toasts}/>
+    </div>
+  </${Store.Provider}>`;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+
+
+</script>
+</body>
+</html>
