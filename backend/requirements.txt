@@ -1,0 +1,15 @@
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+Flask-Cors==4.0.1
+PyJWT==2.8.0
+python-dotenv==1.0.1
+SQLAlchemy==2.0.36
+# PostgreSQL driver — used on Render / Neon (DATABASE_URL=postgres://...)
+psycopg[binary]==3.2.3
+# MySQL driver — only if you point DATABASE_URI at MySQL
+PyMySQL==1.1.1
+cryptography==43.0.3
+# Prescription reader (Gemini) — needs GEMINI_API_KEY
+google-genai==2.25.0
+# Production server
+gunicorn==23.0.0
