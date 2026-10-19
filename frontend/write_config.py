@@ -1,20 +1,31 @@
+
 """Netlify build step: write config.js pointing the frontend at the API.
 
-Reads NIROG_API_BASE (e.g. https://nirog-api.onrender.com, no trailing /api).
-Without it, config.js leaves the default of http://127.0.0.1:5000 in place.
+Uses the correct production Render backend URL by default.
+An optional NIROG_API_BASE environment variable can override it.
 """
+
 import json
 import os
 from pathlib import Path
 
-base = os.environ.get("NIROG_API_BASE", "").strip().rstrip("/")
+DEFAULT_API_BASE = "https://nirog-api-4k56.onrender.com"
+
+base = (
+    os.environ.get("NIROG_API_BASE", "").strip()
+    or DEFAULT_API_BASE
+)
+base = base.rstrip("/")
+
+# Remove /api if accidentally included.
 if base.endswith("/api"):
-    base = base[: -len("/api")]
+    base = base[:-4]
 
 out = Path(__file__).with_name("config.js")
-if base:
-    out.write_text(f"window.NIROG_API_BASE = {json.dumps(base)};\n")
-    print(f"config.js -> {base}")
-else:
-    out.write_text("/* NIROG_API_BASE not set; using the local default. */\n")
-    print("NIROG_API_BASE not set; frontend will call http://127.0.0.1:5000")
+out.write_text(
+    f"window.NIROG_API_BASE = {json.dumps(base)};\n",
+    encoding="utf-8",
+)
+
+print(f"NIROG_API_BASE configured: {base}")
+print(f"Generated config.js at: {out}")
